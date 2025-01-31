@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const Login = () => {
   const navigate = useNavigate();
   const handleSignUp = ()=>{
-    navigate('/signup')
+    // navigate('/signup')
   }
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
