@@ -8,6 +8,7 @@ export const Home = () => {
   }
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
+      afdsff
       <img src='/img/logo'></img>
       <button onClick={handleLogin}>login</button>
     </div>
