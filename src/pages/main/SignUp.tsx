@@ -3,74 +3,25 @@ import { useNavigate } from 'react-router-dom'
 import api from '../../config/api';
 import { Signup } from '../../types/user/type';
 
-export type Project = {
-  id: number;
-  name: string;
-  projectType: string;
-}
-
-const signupUser = async (signup: Signup) => {
-  await api.post('/api/users/signup', signup);
-}
-const getUserProjects = async (userId: number) => {
-  const res = await api.get(`/api/projects/${userId}`);
-  return res.data as Project[];
-}
-
 export const SignUp = () => {
-  const navigate = useNavigate();
 
-  const [signupReq, setSignupReq] = useState<Signup>({
-    userId: '',
-    userPw: '',
-    name: '',
-  });
-  const [projects, setProjects] = useState<Project[]>([]);
-  const userId = 2;
-  const listProject = async (userId: number)=> getUserProjects(userId).then(data => setProjects(data));
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setSignupReq((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-  const handleSubmit = async () => {
-    await signupUser(signupReq);
-    navigate('/login');
-  }
-
-  useEffect(()=>{
-    if(userId) {
-      listProject(userId);
-    }
-  }, [])
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      회원가입 페이지
-      <input
-        type='text'
-        name='userId'
-        onChange={handleChange}
-        placeholder='id'
-      />
-      <input
-        type='password'
-        name='userPw'
-        onChange={handleChange}
-        placeholder='pw'
-      />
-      <input
-        type='text'
-        name='name'
-        onChange={handleChange}
-        placeholder='name'
-      />
-      <button onClick={handleSubmit}>
-        저장
-      </button>
+    <div className="flex justify-center items-center flex-col h-screen bg-white space-y-4">
+      <div className='flex justify-center items-center gap-4'>
+        <img src='src\img\logo.jpg' className='w-12 h-auto'></img>
+        <h1 className='text-3xl text-blue-800 font-semibold'>회원가입</h1>
+      </div>
+      <form className='flex justify-center items-center flex-col h-screen bg-blue-50'>
+        <div>이름<input type='text' name='userName'></input></div>
+        <div>아이디(이메일)<input type='text' name='userName'></input></div>
+        <div>비밀번호<input type='text' name='userName'></input></div>
+        <div>비밀번호 확인<input type='text' name='userName'></input></div>
+        <div>전화번호<input type='text' name='userName'></input></div>
+        <div>전화번호 인증<input type='text' name='userName'></input></div>
+        <div>부서<input type='text' name='userName'></input></div>
+        <button type='submit' className='rounded bg-blue-800 w-[200px] h-[40px] text-1xl font-medium text-white hover:bg-blue-900'>회원가입 완료</button>
+      </form>
     </div>
   );
 };
