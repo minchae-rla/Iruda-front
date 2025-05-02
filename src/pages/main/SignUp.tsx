@@ -102,11 +102,11 @@ export const SignUp = () => {
       await api.post(
         'http://localhost:8081/api/users/signup',
         {
-          userName,
+          name: userName,
           userId,
           userPw,
-          userPhone,
-          userDepartment,
+          phone: userPhone,
+          department: userDepartment,
         },
         {
           headers: {
