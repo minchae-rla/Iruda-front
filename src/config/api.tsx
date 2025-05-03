@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080', // 백엔드 서버 주소에 맞게 조정
+  baseURL: 'http://localhost:8081',
   headers: {
     'Content-Type': 'application/json',
   },

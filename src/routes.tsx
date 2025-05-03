@@ -1,21 +1,20 @@
+import { Login } from "./pages/main/Login";
 import { Home } from "./pages/main/Home";
-import Login from "./pages/main/Login";
 import { SignUp } from "./pages/main/SignUp";
 
 const routes = [
   {
     path: "/",
-    element: <Home/>
+    element: <Login/>
   },
   {
-    path: "/login",
-    element: <Login/>
+    path: "/home",
+    element: <Home/>
   },
   {
     path: "/signup",
     element: <SignUp />,
-  },
-
+  }
 ];
 
 export default routes;

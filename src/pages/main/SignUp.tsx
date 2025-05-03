@@ -266,7 +266,7 @@ export const SignUp = () => {
             회원가입 완료
           </button>
         </form>
-        <div className="text-center mt-4">
+        <div className="text-center">
           <p className="text-sm text-gray-600">
             이미 계정이 있으신가요?
             <a href="/" className="text-blue-800 hover:underline">
