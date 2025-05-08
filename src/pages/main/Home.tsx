@@ -1,6 +1,6 @@
-import { Header } from "../../component/Header"
-import { SideBar } from "../../component/SideBar"
-import { Calendar } from "../../component/Calendar"
+import { Header } from "../../components/Header"
+import { SideBar } from "../../components/SideBar"
+import { Calendar } from "../../components/Calendar"
 
 export const Home = () => {
   return (
