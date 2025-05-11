@@ -43,6 +43,27 @@ export const SignUp = () => {
     setIsModalOpen(false);
   };
 
+  const [idCheck, setIdCheck] = useState<string>('');
+
+const checkId = async (userId: string) => {
+  try {
+    const response = await api.post(
+      'http://localhost:8081/api/users/idCheck',
+      { userId },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+
+    if (response.data === true) {
+      setIdCheck('이미 존재하는 아이디입니다.');
+    } else {
+      setIdCheck('사용 가능한 아이디입니다.');
+    }
+  } catch (error) {
+    console.error('아이디 중복 체크 실패:', error);
+    setIdCheck('아이디 중복 체크에 실패했습니다.');
+  }
+};
+
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
@@ -221,7 +242,7 @@ export const SignUp = () => {
               <label className="block w-full text-left text-sm">이름</label>
               <input
                 value={userName}
-                placeholder="홍길동"
+                placeholder="ex)홍길동"
                 onChange={(e) => setUserName(e.target.value)}
                 onBlur={() => handleBlur('userName')}
                 className={`border w-[250px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userName ? 'border-red-500' : ''}`}
@@ -234,12 +255,25 @@ export const SignUp = () => {
               <input
                 type="email"
                 value={userId}
-                placeholder="example@email.com"
-                onChange={(e) => setUserId(e.target.value)}
-                onBlur={() => handleBlur('userId')}
+                placeholder="ex)example@email.com"
+                onChange={(e) => {
+                  setUserId(e.target.value);
+                  setIdCheck('');
+                }}
+                onBlur={() => {
+                  handleBlur('userId');
+                  if (emailRegex.test(userId)) {
+                    checkId(userId);
+                  }
+                }}
                 className={`border w-[250px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userId ? 'border-red-500' : ''}`}
               />
               {errors.userId && <p className="text-red-500 text-left text-xs">{errors.userId}</p>}
+              {idCheck && (
+                <p className={`text-left text-xs ${idCheck.includes('사용 가능') ? 'text-green-600' : 'text-red-500'}`}>
+                  {idCheck}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2 w-[250px]">
@@ -271,7 +305,7 @@ export const SignUp = () => {
               <label className="block w-full text-left text-sm">전화번호</label>
               <input
                 value={userPhone}
-                placeholder="01012345678 (하이픈 없이 입력)"
+                placeholder="ex)01012345678 (하이픈 없이 입력)"
                 onChange={(e) => setUserPhone(e.target.value)}
                 onBlur={() => handleBlur('userPhone')}
                 className={`border w-[250px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userPhone ? 'border-red-500' : ''}`}
@@ -314,7 +348,6 @@ export const SignUp = () => {
             </div>
 
             <div className="space-y-2 w-[280px]">
-
               <label className="w-full text-sm">
                 <span className='text-gray-500'>[필수]</span>
                 개인정보 수집 및 이용 동의
