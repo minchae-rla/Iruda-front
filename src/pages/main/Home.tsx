@@ -1,6 +1,6 @@
-import { Header } from "../../components/Header"
-import { SideBar } from "../../components/SideBar"
-import { Calendar } from "../../components/Calendar"
+import { Header } from "../../components/Header";
+import { SideBar } from "../../components/SideBar";
+import MyCalendar from "../../components/MyCalendar";
 
 export const Home = () => {
   return (
@@ -9,9 +9,9 @@ export const Home = () => {
       <div className="flex flex-1 overflow-hidden">
         <SideBar />
         <main className="flex-1 overflow-auto p-4">
-          <Calendar />
+          <MyCalendar />
         </main>
       </div>
     </div>
-  )
-}
+  );
+};

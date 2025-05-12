@@ -45,28 +45,30 @@ export const SignUp = () => {
 
   const [idCheck, setIdCheck] = useState<string>('');
 
-const checkId = async (userId: string) => {
-  try {
-    const response = await api.post(
-      'http://localhost:8081/api/users/idCheck',
-      { userId },
-      { headers: { 'Content-Type': 'application/json' } }
-    );
+  const checkId = async (userId: string) => {
+    try {
+      const response = await api.post(
+        'http://localhost:8081/api/users/idCheck',
+        { userId },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
 
-    if (response.data === true) {
-      setIdCheck('이미 존재하는 아이디입니다.');
-    } else {
-      setIdCheck('사용 가능한 아이디입니다.');
+      if (response.data === true) {
+        setIdCheck('이미 존재하는 아이디입니다.');
+      } else {
+        setIdCheck('사용 가능한 아이디입니다.');
+      }
+    } catch (error) {
+      console.error('아이디 중복 체크 실패:', error);
+      setIdCheck('아이디 중복 체크에 실패했습니다.');
     }
-  } catch (error) {
-    console.error('아이디 중복 체크 실패:', error);
-    setIdCheck('아이디 중복 체크에 실패했습니다.');
-  }
-};
+  };
 
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+
+  const birthRegex = /^(19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])$/;
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -218,10 +220,14 @@ const checkId = async (userId: string) => {
       default:
         break;
       case 'userBirth':
-        if (!userBirth) formErrors.userBirth = '생년월일을 입력해주세요.';
-        else formErrors.userBirth = '';
+        if (!userBirth) {
+          formErrors.userBirth = '생년월일을 입력해주세요.';
+        } else if (!birthRegex.test(userBirth)) {
+          formErrors.userBirth = '생년월일은 20001010 형식으로 입력해주세요.';
+        } else {
+          formErrors.userBirth = '';
+        }
         break;
-
     }
     setErrors(formErrors);
   };
@@ -238,19 +244,19 @@ const checkId = async (userId: string) => {
             onSubmit={handleSignUp}
             className="flex justify-center items-center flex-col space-y-4 w-[350px]"
           >
-            <div className="space-y-2 w-[250px]">
+            <div className="space-y-2 w-[280px]">
               <label className="block w-full text-left text-sm">이름</label>
               <input
                 value={userName}
                 placeholder="ex)홍길동"
                 onChange={(e) => setUserName(e.target.value)}
                 onBlur={() => handleBlur('userName')}
-                className={`border w-[250px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userName ? 'border-red-500' : ''}`}
+                className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userName ? 'border-red-500' : ''}`}
               />
               {errors.userName && <p className="text-red-500 text-left text-xs">{errors.userName}</p>}
             </div>
 
-            <div className="space-y-2 w-[250px]">
+            <div className="space-y-2 w-[280px]">
               <label className="block w-full text-left text-sm">아이디(이메일)</label>
               <input
                 type="email"
@@ -266,7 +272,7 @@ const checkId = async (userId: string) => {
                     checkId(userId);
                   }
                 }}
-                className={`border w-[250px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userId ? 'border-red-500' : ''}`}
+                className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userId ? 'border-red-500' : ''}`}
               />
               {errors.userId && <p className="text-red-500 text-left text-xs">{errors.userId}</p>}
               {idCheck && (
@@ -276,7 +282,7 @@ const checkId = async (userId: string) => {
               )}
             </div>
 
-            <div className="space-y-2 w-[250px]">
+            <div className="space-y-2 w-[280px]">
               <label className="block w-full text-left text-sm">비밀번호</label>
               <input
                 type="password"
@@ -284,65 +290,70 @@ const checkId = async (userId: string) => {
                 placeholder="영문, 숫자, 특수문자 포함 (최소 8자 이상)"
                 onChange={(e) => setUserPw(e.target.value)}
                 onBlur={() => handleBlur('userPw')}
-                className={`border w-[250px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userPw ? 'border-red-500' : ''}`}
+                className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userPw ? 'border-red-500' : ''}`}
               />
               {errors.userPw && <p className="text-red-500 text-left text-xs">{errors.userPw}</p>}
             </div>
 
-            <div className="space-y-2 w-[250px]">
+            <div className="space-y-2 w-[280px]">
               <label className="block w-full text-left text-sm">비밀번호 확인</label>
               <input
                 type="password"
                 value={userPwCheck}
                 onChange={(e) => setUserPwCheck(e.target.value)}
                 onBlur={() => handleBlur('userPwCheck')}
-                className={`border w-[250px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 ${errors.userPwCheck ? 'border-red-500' : ''}`}
+                className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 ${errors.userPwCheck ? 'border-red-500' : ''}`}
               />
               {errors.userPwCheck && <p className="text-red-500 text-left text-xs">{errors.userPwCheck}</p>}
             </div>
 
-            <div className="space-y-2 w-[250px]">
+            <div className="space-y-2 w-[280px]">
               <label className="block w-full text-left text-sm">전화번호</label>
-              <input
-                value={userPhone}
-                placeholder="ex)01012345678 (하이픈 없이 입력)"
-                onChange={(e) => setUserPhone(e.target.value)}
-                onBlur={() => handleBlur('userPhone')}
-                className={`border w-[250px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userPhone ? 'border-red-500' : ''}`}
-              />
+              <div className='flex gap-2'>
+                <input
+                  value={userPhone}
+                  placeholder="ex)01012345678 (하이픈 없이 입력)"
+                  onChange={(e) => setUserPhone(e.target.value)}
+                  onBlur={() => handleBlur('userPhone')}
+                  className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userPhone ? 'border-red-500' : ''}`}
+                />
+                <button type='button' className='border w-[50px] h-[35px] rounded-md text-sm hover:bg-gray-100'>발송</button>
+              </div>
               {errors.userPhone && <p className="text-red-500 text-left text-xs">{errors.userPhone}</p>}
             </div>
 
-            <div className="space-y-2 w-[250px]">
+            <div className="space-y-2 w-[280px]">
               <label className="block w-full text-left text-sm">인증번호 입력</label>
               <input
                 value={userPhoneCheck}
                 onChange={(e) => setUserPhoneCheck(e.target.value)}
                 onBlur={() => handleBlur('userPhoneCheck')}
-                className={`border w-[250px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userPhoneCheck ? 'border-red-500' : ''}`}
+                className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userPhoneCheck ? 'border-red-500' : ''}`}
               />
               {errors.userPhoneCheck && <p className="text-red-500 text-left text-xs">{errors.userPhoneCheck}</p>}
             </div>
 
-            <div className="space-y-2 w-[250px]">
+            <div className="space-y-2 w-[280px]">
               <label className="block w-full text-left text-sm">생년월일</label>
               <input
-                type="date"
+                type="text"
                 value={userBirth}
+                placeholder="ex)20001010"
+                maxLength={8}
                 onChange={(e) => setUserBirth(e.target.value)}
                 onBlur={() => handleBlur('userBirth')}
-                className={`border w-[250px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userBirth ? 'border-red-500' : ''}`}
+                className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userBirth ? 'border-red-500' : ''}`}
               />
               {errors.userBirth && <p className="text-red-500 text-left text-xs">{errors.userBirth}</p>}
             </div>
 
-            <div className="space-y-2 w-[250px]">
+            <div className="space-y-2 w-[280px]">
               <label className="block w-full text-left text-sm">소속(팀)</label>
               <input
                 value={userDepartment}
                 onChange={(e) => setUserDepartment(e.target.value)}
                 onBlur={() => handleBlur('userDepartment')}
-                className={`border w-[250px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 ${errors.userDepartment ? 'border-red-500' : ''}`}
+                className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 ${errors.userDepartment ? 'border-red-500' : ''}`}
               />
               {errors.userDepartment && <p className="text-red-500 text-left text-xs">{errors.userDepartment}</p>}
             </div>
