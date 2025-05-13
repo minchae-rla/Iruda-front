@@ -112,7 +112,7 @@ export const FindPw = () => {
         if (!userBirth) {
           formErrors.userBirth = '생년월일을 입력해주세요.';
         } else if (!birthRegex.test(userBirth)) {
-          formErrors.userBirth = '생년월일은 YYYYMMDD 형식으로 입력해주세요.';
+          formErrors.userBirth = '생년월일은 20001010 형식으로 입력해주세요.';
         } else {
           formErrors.userBirth = '';
         }

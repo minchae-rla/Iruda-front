@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../config/api';
+import FindIdResultModal from '../../components/modals/FindIdResultModal';
 
 export const FindId = () => {
   const navigate = useNavigate();
@@ -9,6 +10,8 @@ export const FindId = () => {
   const [userBirth, setUserBirth] = useState('');
   const [userPhone, setUserPhone] = useState('');
   const [userPhoneCheck, setUserPhoneCheck] = useState('');
+  const [userId, setUserId] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   const [errors, setErrors] = useState({
     userName: '',
@@ -58,13 +61,12 @@ export const FindId = () => {
     if (!isValid) return;
 
     try {
-      await api.post(
+      const response = await api.post(
         'http://localhost:8081/api/users/findId',
         {
           name: userName,
           birth: userBirth,
           phone: userPhone,
-          phoneCheck: userPhoneCheck,
         },
         {
           headers: {
@@ -72,11 +74,12 @@ export const FindId = () => {
           },
         }
       );
-
-      alert('회원가입이 완료되었습니다!');
-      navigate('/');
+      const foundUserId = response.data;
+      console.log(foundUserId);
+      setUserId(foundUserId);
+      setShowModal(true);
     } catch (error) {
-      console.error('회원가입 실패:', error);
+      console.error('아이디 찾기 실패:', error);
       alert('아이디찾기 실패. 다시 시도해주세요.');
     }
   };
@@ -92,7 +95,7 @@ export const FindId = () => {
         if (!userBirth) {
           formErrors.userBirth = '생년월일을 입력해주세요.';
         } else if (!birthRegex.test(userBirth)) {
-          formErrors.userBirth = '생년월일은 YYYYMMDD 형식으로 입력해주세요.';
+          formErrors.userBirth = '생년월일은 20001010 형식으로 입력해주세요.';
         } else {
           formErrors.userBirth = '';
         }
@@ -191,6 +194,13 @@ export const FindId = () => {
           </div>
         </div>
       </div>
+
+      {showModal && (
+        <FindIdResultModal
+          foundUserId={userId}
+          onClose={() => setShowModal(false)}
+        />
+      )}
     </>
   );
 };

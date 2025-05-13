@@ -66,7 +66,7 @@ export const Login = () => {
           <img src="/img/google.png" className='w-10 h-auto hover:cursor-pointer' />
         </div>
       </div>
-      <div className="flex justify-center items-center gap-1">
+      <div className="flex justify-center items-center">
         <button onClick={handleSignUp} className="w-[85px] h-[40px] text-sm font-medium text-gray-500 hover:underline">회원가입</button>
         <button onClick={handleFindId} className="w-[85px] h-[40px] text-sm font-medium text-gray-500 hover:underline">아이디찾기</button>
         <button onClick={handleFindPw} className="w-[85px] h-[40px] text-sm font-medium text-gray-500 hover:underline">비밀번호찾기</button>
