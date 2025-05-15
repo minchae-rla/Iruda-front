@@ -308,11 +308,25 @@ export const SignUp = () => {
             </div>
 
             <div className="space-y-2 w-[280px]">
+              <label className="block w-full text-left text-sm">생년월일</label>
+              <input
+                type="text"
+                value={userBirth}
+                placeholder="ex)20001010"
+                maxLength={8}
+                onChange={(e) => setUserBirth(e.target.value)}
+                onBlur={() => handleBlur('userBirth')}
+                className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userBirth ? 'border-red-500' : ''}`}
+              />
+              {errors.userBirth && <p className="text-red-500 text-left text-xs">{errors.userBirth}</p>}
+            </div>
+
+            <div className="space-y-2 w-[280px]">
               <label className="block w-full text-left text-sm">전화번호</label>
               <div className='flex gap-2'>
                 <input
                   value={userPhone}
-                  placeholder="ex)01012345678 (하이픈 없이 입력)"
+                  placeholder="ex)01012345678 ('-' 없이 입력)"
                   onChange={(e) => setUserPhone(e.target.value)}
                   onBlur={() => handleBlur('userPhone')}
                   className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userPhone ? 'border-red-500' : ''}`}
@@ -331,20 +345,6 @@ export const SignUp = () => {
                 className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userPhoneCheck ? 'border-red-500' : ''}`}
               />
               {errors.userPhoneCheck && <p className="text-red-500 text-left text-xs">{errors.userPhoneCheck}</p>}
-            </div>
-
-            <div className="space-y-2 w-[280px]">
-              <label className="block w-full text-left text-sm">생년월일</label>
-              <input
-                type="text"
-                value={userBirth}
-                placeholder="ex)20001010"
-                maxLength={8}
-                onChange={(e) => setUserBirth(e.target.value)}
-                onBlur={() => handleBlur('userBirth')}
-                className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userBirth ? 'border-red-500' : ''}`}
-              />
-              {errors.userBirth && <p className="text-red-500 text-left text-xs">{errors.userBirth}</p>}
             </div>
 
             <div className="space-y-2 w-[280px]">
