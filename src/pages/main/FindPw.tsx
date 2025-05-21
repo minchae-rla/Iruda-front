@@ -87,9 +87,7 @@ export const FindPw = () => {
           },
         }
       );
-
-      alert('회원가입이 완료되었습니다!');
-      navigate('/');
+      navigate('/setPw');
     } catch (error) {
       console.error('회원가입 실패:', error);
       alert('아이디찾기 실패. 다시 시도해주세요.');

@@ -3,6 +3,7 @@ import { Home } from "./pages/main/Home";
 import { SignUp } from "./pages/main/SignUp";
 import { FindId } from "./pages/main/FindId";
 import { FindPw } from "./pages/main/FindPw";
+import { SetPw } from "./pages/main/SetPw";
 
 const routes = [
   {
@@ -24,6 +25,10 @@ const routes = [
   {
     path: "/findPw",
     element: <FindPw />
+  },
+    {
+    path: "/setPw",
+    element: <SetPw />
   }
 ];
 
