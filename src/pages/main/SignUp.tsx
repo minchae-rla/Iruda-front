@@ -60,7 +60,6 @@ export const SignUp = () => {
       }
     } catch (error) {
       console.error('아이디 중복 체크 실패:', error);
-      setIdCheck('아이디 중복 체크에 실패했습니다.');
     }
   };
 
@@ -139,6 +138,9 @@ export const SignUp = () => {
 
     if (!userBirth) {
       formErrors.userBirth = '생년월일을 입력해주세요.';
+      isValid = false;
+    } else if (!birthRegex.test(userBirth)) {
+      formErrors.userBirth = '생년월일은 20001010 형식으로 입력해주세요.';
       isValid = false;
     } else {
       formErrors.userBirth = '';

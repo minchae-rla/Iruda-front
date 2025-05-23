@@ -36,7 +36,10 @@ export const FindId = () => {
     }
 
     if (!userBirth) {
-      formErrors.userBirth = '생년원일을 입력해주세요.';
+      formErrors.userBirth = '생년월일을 입력해주세요.';
+      isValid = false;
+    } else if (!birthRegex.test(userBirth)) {
+      formErrors.userBirth = '생년월일은 20001010 형식으로 입력해주세요.';
       isValid = false;
     } else {
       formErrors.userBirth = '';

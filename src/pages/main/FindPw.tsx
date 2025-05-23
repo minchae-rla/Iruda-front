@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../config/api';
+import { SetPw } from './SetPw';
 
 export const FindPw = () => {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ export const FindPw = () => {
   const [userBirth, setUserBirth] = useState('');
   const [userPhone, setUserPhone] = useState('');
   const [userPhoneCheck, setUserPhoneCheck] = useState('');
+  const [id, setId] = useState('');
 
   const [errors, setErrors] = useState({
     userId: '',
@@ -47,7 +49,10 @@ export const FindPw = () => {
     }
 
     if (!userBirth) {
-      formErrors.userBirth = '생년원일을 입력해주세요.';
+      formErrors.userBirth = '생년월일을 입력해주세요.';
+      isValid = false;
+    } else if (!birthRegex.test(userBirth)) {
+      formErrors.userBirth = '생년월일은 20001010 형식으로 입력해주세요.';
       isValid = false;
     } else {
       formErrors.userBirth = '';
@@ -72,7 +77,7 @@ export const FindPw = () => {
     if (!isValid) return;
 
     try {
-      await api.post(
+      const response = await api.post(
         'http://localhost:8081/api/users/findPw',
         {
           userId: userId,
@@ -87,10 +92,11 @@ export const FindPw = () => {
           },
         }
       );
-      navigate('/setPw');
+      const foundId = response.data;
+      navigate('/setPw', { state: { userId: foundId } });
     } catch (error) {
       console.error('회원가입 실패:', error);
-      alert('아이디찾기 실패. 다시 시도해주세요.');
+      alert('비밀번호찾기 실패. 다시 시도해주세요.');
     }
   };
 

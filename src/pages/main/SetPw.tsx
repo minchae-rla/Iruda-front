@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import api from '../../config/api';
 
 export const SetPw = () => {
   const navigate = useNavigate();
+
+  const location = useLocation();
+  const id = location.state?.userId;
 
   const [userPw, setUserPw] = useState('');
   const [userPwCheck, setUserPwCheck] = useState('');
@@ -50,9 +54,10 @@ export const SetPw = () => {
     if (!isValid) return;
 
     try {
-      await api.post(
+      await api.put(
         'http://localhost:8081/api/users/setPw',
         {
+          id,
           userPw
         },
         {
@@ -123,6 +128,8 @@ export const SetPw = () => {
               />
               {errors.userPwCheck && <p className="text-red-500 text-left text-xs">{errors.userPwCheck}</p>}
             </div>
+
+            <input type='hidden' value={id}/>
 
             <button
               type="submit"
