@@ -49,7 +49,7 @@ const PrivacyAgreeModal: React.FC<PrivacyAgreeModalProps> = ({ onClose, onAgree 
             <button className="rounded bg-blue-800 w-[60px] hover:bg-blue-900 text-white" onClick={onAgree}>
               동의
             </button>
-            <button className="rounded w-[60px] border border-gray-200" onClick={onClose}>
+            <button className="rounded w-[60px] border border-gray-200 hover:bg-gray-100" onClick={onClose}>
               닫기
             </button>
           </div>
