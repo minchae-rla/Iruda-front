@@ -31,6 +31,12 @@ export const Login = () => {
     }
   };
 
+  const handleKakao = async () => {
+    const res = await fetch('http://localhost:8081/api/auth/kakao');
+    const { redirectUrl } = await res.json();
+    window.location.href = redirectUrl;
+  };
+
   const handleSignUp = () => navigate('/signUp');
   const handleFindId = () => navigate('/findId');
   const handleFindPw = () => navigate('/findPw');
@@ -61,7 +67,7 @@ export const Login = () => {
       <div className="flex flex-col gap-4">
         <p className='text-sm text-gray-600'>소셜로 간편하게 로그인</p>
         <div className='flex gap-7'>
-          <img src="/img/kakao.png" className='w-10 h-auto hover:cursor-pointer' />
+          <img src="/img/kakao.png" className='w-10 h-auto hover:cursor-pointer' onClick={handleKakao} />
           <img src="/img/naver.png" className='w-10 h-auto hover:cursor-pointer' />
           <img src="/img/google.png" className='w-10 h-auto hover:cursor-pointer' />
         </div>
