@@ -246,69 +246,7 @@ export const SignUp = () => {
             onSubmit={handleSignUp}
             className="flex justify-center items-center flex-col space-y-4 w-[350px]"
           >
-            <div className="space-y-2 w-[280px]">
-              <label className="block w-full text-left text-sm">이름</label>
-              <input
-                value={userName}
-                placeholder="ex)홍길동"
-                onChange={(e) => setUserName(e.target.value)}
-                onBlur={() => handleBlur('userName')}
-                className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userName ? 'border-red-500' : ''}`}
-              />
-              {errors.userName && <p className="text-red-500 text-left text-xs">{errors.userName}</p>}
-            </div>
-
-            <div className="space-y-2 w-[280px]">
-              <label className="block w-full text-left text-sm">아이디(이메일)</label>
-              <input
-                type="email"
-                value={userId}
-                placeholder="ex)example@email.com"
-                onChange={(e) => {
-                  setUserId(e.target.value);
-                  setIdCheck('');
-                }}
-                onBlur={() => {
-                  handleBlur('userId');
-                  if (emailRegex.test(userId)) {
-                    checkId(userId);
-                  }
-                }}
-                className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userId ? 'border-red-500' : ''}`}
-              />
-              {errors.userId && <p className="text-red-500 text-left text-xs">{errors.userId}</p>}
-              {idCheck && (
-                <p className={`text-left text-xs ${idCheck.includes('사용 가능') ? 'text-green-600' : 'text-red-500'}`}>
-                  {idCheck}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2 w-[280px]">
-              <label className="block w-full text-left text-sm">비밀번호</label>
-              <input
-                type="password"
-                value={userPw}
-                placeholder="영문, 숫자, 특수문자 포함 (최소 8자 이상)"
-                onChange={(e) => setUserPw(e.target.value)}
-                onBlur={() => handleBlur('userPw')}
-                className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userPw ? 'border-red-500' : ''}`}
-              />
-              {errors.userPw && <p className="text-red-500 text-left text-xs">{errors.userPw}</p>}
-            </div>
-
-            <div className="space-y-2 w-[280px]">
-              <label className="block w-full text-left text-sm">비밀번호 확인</label>
-              <input
-                type="password"
-                value={userPwCheck}
-                onChange={(e) => setUserPwCheck(e.target.value)}
-                onBlur={() => handleBlur('userPwCheck')}
-                className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 ${errors.userPwCheck ? 'border-red-500' : ''}`}
-              />
-              {errors.userPwCheck && <p className="text-red-500 text-left text-xs">{errors.userPwCheck}</p>}
-            </div>
-
+            
             <div className="space-y-2 w-[280px]">
               <label className="block w-full text-left text-sm">생년월일</label>
               <input
