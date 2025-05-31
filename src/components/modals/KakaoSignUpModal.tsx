@@ -7,11 +7,6 @@ export const SignUp = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-
-  const [userName, setUserName] = useState('');
-  const [userId, setUserId] = useState('');
-  const [userPw, setUserPw] = useState('');
-  const [userPwCheck, setUserPwCheck] = useState('');
   const [userPhone, setUserPhone] = useState('');
   const [userPhoneCheck, setUserPhoneCheck] = useState('');
   const [userDepartment, setUserDepartment] = useState('');
@@ -43,29 +38,6 @@ export const SignUp = () => {
     setIsModalOpen(false);
   };
 
-  const [idCheck, setIdCheck] = useState<string>('');
-
-  const checkId = async (userId: string) => {
-    try {
-      const response = await api.post(
-        'http://localhost:8081/api/users/idCheck',
-        { userId },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
-
-      if (response.data === true) {
-        setIdCheck('이미 존재하는 아이디입니다.');
-      } else {
-        setIdCheck('사용 가능한 아이디입니다.');
-      }
-    } catch (error) {
-      console.error('아이디 중복 체크 실패:', error);
-    }
-  };
-
-  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-
-  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
 
   const birthRegex = /^(19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])$/;
 
@@ -74,46 +46,6 @@ export const SignUp = () => {
 
     let formErrors = { ...errors };
     let isValid = true;
-
-    if (!userName) {
-      formErrors.userName = '이름을 입력해주세요.';
-      isValid = false;
-    } else {
-      formErrors.userName = '';
-    }
-
-    if (!userId) {
-      formErrors.userId = '아이디를 입력해주세요.';
-      isValid = false;
-    } else if (!emailRegex.test(userId)) {
-      formErrors.userId = '올바른 이메일 형식을 입력해주세요.';
-      isValid = false;
-    } else {
-      formErrors.userId = '';
-    }
-
-    if (!userPw) {
-      formErrors.userPw = '비밀번호를 입력해주세요.';
-      isValid = false;
-    } else if (userPw.length < 8) {
-      formErrors.userPw = '비밀번호는 최소 8자 이상이어야 합니다.';
-      isValid = false;
-    } else if (!passwordRegex.test(userPw)) {
-      formErrors.userPw = '비밀번호는 영문, 숫자, 특수문자를 모두 포함해야 합니다.';
-      isValid = false;
-    } else {
-      formErrors.userPw = '';
-    }
-
-    if (!userPwCheck) {
-      formErrors.userPwCheck = '비밀번호를 입력해주세요.';
-      isValid = false;
-    } else if (userPw !== userPwCheck) {
-      formErrors.userPwCheck = '비밀번호가 일치하지 않습니다.'
-      isValid = false;
-    } else {
-      formErrors.userPwCheck = '';
-    }
 
     if (!userPhone) {
       formErrors.userPhone = '전화번호를 입력해주세요.';
@@ -187,26 +119,6 @@ export const SignUp = () => {
   const handleBlur = (field: string) => {
     let formErrors = { ...errors };
     switch (field) {
-      case 'userName':
-        if (!userName) formErrors.userName = '이름을 입력해주세요.';
-        else formErrors.userName = '';
-        break;
-      case 'userId':
-        if (!userId) formErrors.userId = '아이디를 입력해주세요.';
-        else if (!emailRegex.test(userId)) formErrors.userId = '올바른 이메일 형식을 입력해주세요.';
-        else formErrors.userId = '';
-        break;
-      case 'userPw':
-        if (!userPw) formErrors.userPw = '비밀번호를 입력해주세요.';
-        else if (userPw.length < 8) formErrors.userPw = '비밀번호는 최소 8자 이상이어야 합니다.';
-        else if (!passwordRegex.test(userPw)) formErrors.userPw = '비밀번호는 영문, 숫자, 특수문자를 모두 포함해야 합니다.';
-        else formErrors.userPw = '';
-        break;
-      case 'userPwCheck':
-        if (!userPwCheck) formErrors.userPwCheck = '비밀번호를 입력해주세요.';
-        else if (userPw !== userPwCheck) formErrors.userPwCheck = '비밀번호가 일치하지 않습니다.';
-        else formErrors.userPwCheck = '';
-        break;
       case 'userPhone':
         if (!userPhone) formErrors.userPhone = '전화번호를 입력해주세요.';
         else formErrors.userPhone = '';
