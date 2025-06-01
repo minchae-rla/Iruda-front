@@ -14,10 +14,6 @@ export const SignUp = () => {
   const [userPrivacyAgree, setUserPrivacyAgree] = useState(false);
 
   const [errors, setErrors] = useState({
-    userName: '',
-    userId: '',
-    userPw: '',
-    userPwCheck: '',
     userPhone: '',
     userPhoneCheck: '',
     userDepartment: '',
@@ -93,9 +89,6 @@ export const SignUp = () => {
       await api.post(
         'http://localhost:8081/api/users/signup',
         {
-          name: userName,
-          userId,
-          userPw,
           phone: userPhone,
           department: userDepartment,
           birth: userBirth,
