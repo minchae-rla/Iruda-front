@@ -31,11 +31,13 @@ export const Login = () => {
     }
   };
 
-  const handleKakao = async () => {
-    const res = await fetch('http://localhost:8081/api/auth/kakao');
-    const { redirectUrl } = await res.json();
-    window.location.href = redirectUrl;
-  };
+  // const handleKakao = async () => {
+  //   const res = await fetch('http://localhost:8081/api/auth/kakao');
+  //   const { redirectUrl } = await res.json();
+  //   window.location.href = redirectUrl;
+  // };
+
+  const handleKakao = () => navigate('/kakaoSignUp');
 
   const handleSignUp = () => navigate('/signUp');
   const handleFindId = () => navigate('/findId');

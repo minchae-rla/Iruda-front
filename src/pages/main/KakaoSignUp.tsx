@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../config/api';
 import PrivacyAgreeModal from '../../components/modals/PrivacyAgreeModal';
 
-export const SignUp = () => {
+export const KakaoSignUp = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -145,7 +145,7 @@ export const SignUp = () => {
         <div className="rounded-lg border-2 space-y-3 py-4">
           <div className="flex justify-center items-center gap-4">
             <img src="/img/logo.jpg" className="w-10 h-auto" />
-            <h1 className="text-2xl text-blue-900 font-semibold">회원가입</h1>
+            <h1 className="text-2xl text-blue-900 font-semibold">추가정보입력</h1>
           </div>
           <form
             onSubmit={handleSignUp}
