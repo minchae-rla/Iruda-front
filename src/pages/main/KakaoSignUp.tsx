@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../config/api';
 import PrivacyAgreeModal from '../../components/modals/PrivacyAgreeModal';
@@ -7,6 +7,8 @@ export const KakaoSignUp = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [userName, setUserName] = useState('');
+  const [userId, setUserId] = useState('');
   const [userPhone, setUserPhone] = useState('');
   const [userPhoneCheck, setUserPhoneCheck] = useState('');
   const [userDepartment, setUserDepartment] = useState('');
@@ -33,6 +35,23 @@ export const KakaoSignUp = () => {
     setUserPrivacyAgree(true);
     setIsModalOpen(false);
   };
+
+  useEffect(() => {
+    const fetchSessionUser = async () => {
+      try {
+        const response = await api.get('/api/users/kakao/session');
+        setUserName(response.data.userName || '');
+        setUserId(response.data.userId || '');
+      } catch (error) {
+        console.error('카카오 세션 정보 조회 실패:', error);
+        alert('카카오 로그인 세션이 유효하지 않습니다.');
+        navigate('/login');
+      }
+    };
+
+    fetchSessionUser();
+  }, []);
+
 
 
   const birthRegex = /^(19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])$/;
@@ -89,6 +108,8 @@ export const KakaoSignUp = () => {
       await api.post(
         'http://localhost:8081/api/users/signup',
         {
+          userName: userName,
+          userId: userId,
           phone: userPhone,
           department: userDepartment,
           birth: userBirth,
@@ -151,7 +172,9 @@ export const KakaoSignUp = () => {
             onSubmit={handleSignUp}
             className="flex justify-center items-center flex-col space-y-4 w-[350px]"
           >
-            
+            <input type="hidden" value={userName} />
+            <input type="hidden" value={userId} />
+
             <div className="space-y-2 w-[280px]">
               <label className="block w-full text-left text-sm">생년월일</label>
               <input

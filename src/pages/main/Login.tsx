@@ -31,13 +31,13 @@ export const Login = () => {
     }
   };
 
-  // const handleKakao = async () => {
-  //   const res = await fetch('http://localhost:8081/api/auth/kakao');
-  //   const { redirectUrl } = await res.json();
-  //   window.location.href = redirectUrl;
-  // };
+  const handleKakaoLogin = () => {
+    const REST_API_KEY = 'a9666604d9a8a66c9cb9a6f8d856056d';
+    const REDIRECT_URI = 'http://localhost:8081/api/auth/kakao/callback';
+    const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`;
 
-  const handleKakao = () => navigate('/kakaoSignUp');
+    window.location.href = kakaoAuthUrl;
+  };
 
   const handleSignUp = () => navigate('/signUp');
   const handleFindId = () => navigate('/findId');
@@ -69,7 +69,7 @@ export const Login = () => {
       <div className="flex flex-col gap-4">
         <p className='text-sm text-gray-600'>소셜로 간편하게 로그인</p>
         <div className='flex gap-7'>
-          <img src="/img/kakao.png" className='w-10 h-auto hover:cursor-pointer' onClick={handleKakao} />
+          <img src="/img/kakao.png" className='w-10 h-auto hover:cursor-pointer' onClick={handleKakaoLogin} />
           <img src="/img/naver.png" className='w-10 h-auto hover:cursor-pointer' />
           <img src="/img/google.png" className='w-10 h-auto hover:cursor-pointer' />
         </div>
