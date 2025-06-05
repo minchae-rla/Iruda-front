@@ -39,20 +39,24 @@ export const KakaoSignUp = () => {
   useEffect(() => {
     const fetchSessionUser = async () => {
       try {
-        const response = await api.get('/api/users/kakao/session');
-        setUserName(response.data.userName || '');
-        setUserId(response.data.userId || '');
+        const response = await api.get('/api/auth/kakao/session');
+        const { userName, userId } = response.data;
+
+        if (!userName || !userId) {
+          throw new Error('카카오 세션 정보 누락');
+        }
+
+        setUserName(userName);
+        setUserId(userId);
       } catch (error) {
         console.error('카카오 세션 정보 조회 실패:', error);
         alert('카카오 로그인 세션이 유효하지 않습니다.');
-        navigate('/login');
+        navigate('/');
       }
     };
 
     fetchSessionUser();
   }, []);
-
-
 
   const birthRegex = /^(19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])$/;
 
