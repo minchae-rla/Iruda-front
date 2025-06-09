@@ -1,9 +1,6 @@
-
 import axios from 'axios';
 
-const api = axios.create({
-  baseURL: 'http://localhost:8081', 
-  withCredentials: true,            
-});
+axios.defaults.baseURL = 'http://localhost:8081'; 
+axios.defaults.withCredentials = true; 
 
-export default api;
+export default axios;
