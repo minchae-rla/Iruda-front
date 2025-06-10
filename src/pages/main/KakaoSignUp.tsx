@@ -24,27 +24,6 @@ export const KakaoSignUp = () => {
     userPrivacyAgree: '',
   });
 
-  useEffect(() => {
-    const fetchSessionUser = async () => {
-      try {
-        const response = await api.get('/api/auth/kakao/session');
-        const { provider, providerId } = response.data;
-
-        if (!provider || !providerId) {
-          throw new Error('세션 정보 없음');
-        }
-
-        setProvider(provider);
-        setProviderId(providerId);
-      } catch (error) {
-        alert('세션 만료 또는 카카오 로그인 정보 없음');
-        navigate('/');
-      }
-    };
-
-    fetchSessionUser();
-  }, [navigate]);
-
   const birthRegex = /^(19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])$/;
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -151,113 +130,98 @@ export const KakaoSignUp = () => {
       <div className="flex justify-center items-center flex-col bg-white min-h-screen">
         <div className="rounded-lg border-2 space-y-3 py-4">
           <div className="flex justify-center items-center gap-4">
-            <img src="/img/logo.jpg" className="w-10 h-auto" alt="logo" />
-            <h1 className="text-2xl text-blue-900 font-semibold">추가정보입력</h1>
+            <img src="/img/logo.jpg" className="w-10 h-auto" />
+            <h1 className="text-2xl text-blue-900 font-semibold">소셜회원가입</h1>
           </div>
-
-          <form onSubmit={handleSignUp} className="flex flex-col items-center space-y-4 w-[350px]">
+          <form
+            onSubmit={handleSignUp}
+            className="flex justify-center items-center flex-col space-y-4 w-[350px]"
+          >
             <input type="hidden" value={provider} />
             <input type="hidden" value={providerId} />
 
             <div className="space-y-2 w-[280px]">
-              <label className="text-sm">생년월일</label>
+              <label className="block w-full text-left text-sm">생년월일</label>
               <input
                 type="text"
+                value={userBirth}
                 placeholder="ex)20001010"
                 maxLength={8}
-                value={userBirth}
                 onChange={(e) => setUserBirth(e.target.value)}
                 onBlur={() => handleBlur('userBirth')}
-                className={`border w-full h-[35px] rounded-md pl-2 text-sm placeholder:text-xs ${
-                  errors.userBirth ? 'border-red-500' : 'focus:border-blue-900'
-                }`}
+                className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userBirth ? 'border-red-500' : ''}`}
               />
-              {errors.userBirth && <p className="text-red-500 text-xs">{errors.userBirth}</p>}
+              {errors.userBirth && <p className="text-red-500 text-left text-xs">{errors.userBirth}</p>}
             </div>
 
             <div className="space-y-2 w-[280px]">
-              <label className="text-sm">전화번호</label>
-              <input
-                type="text"
-                placeholder="ex)01012345678"
-                value={userPhone}
-                onChange={(e) => setUserPhone(e.target.value)}
-                onBlur={() => handleBlur('userPhone')}
-                className={`border w-full h-[35px] rounded-md pl-2 text-sm placeholder:text-xs ${
-                  errors.userPhone ? 'border-red-500' : 'focus:border-blue-900'
-                }`}
-              />
-              {errors.userPhone && <p className="text-red-500 text-xs">{errors.userPhone}</p>}
+              <label className="block w-full text-left text-sm">전화번호</label>
+              <div className='flex gap-2'>
+                <input
+                  value={userPhone}
+                  placeholder="ex)01012345678 ('-' 없이 입력)"
+                  onChange={(e) => setUserPhone(e.target.value)}
+                  onBlur={() => handleBlur('userPhone')}
+                  className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userPhone ? 'border-red-500' : ''}`}
+                />
+                <button type='button' className='border w-[50px] h-[35px] rounded-md text-sm hover:bg-gray-100'>발송</button>
+              </div>
+              {errors.userPhone && <p className="text-red-500 text-left text-xs">{errors.userPhone}</p>}
             </div>
 
             <div className="space-y-2 w-[280px]">
-              <label className="text-sm">인증번호</label>
+              <label className="block w-full text-left text-sm">인증번호 입력</label>
               <input
-                type="text"
                 value={userPhoneCheck}
                 onChange={(e) => setUserPhoneCheck(e.target.value)}
                 onBlur={() => handleBlur('userPhoneCheck')}
-                className={`border w-full h-[35px] rounded-md pl-2 text-sm placeholder:text-xs ${
-                  errors.userPhoneCheck ? 'border-red-500' : 'focus:border-blue-900'
-                }`}
+                className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userPhoneCheck ? 'border-red-500' : ''}`}
               />
-              {errors.userPhoneCheck && (
-                <p className="text-red-500 text-xs">{errors.userPhoneCheck}</p>
-              )}
+              {errors.userPhoneCheck && <p className="text-red-500 text-left text-xs">{errors.userPhoneCheck}</p>}
             </div>
 
             <div className="space-y-2 w-[280px]">
-              <label className="text-sm">소속(팀)</label>
+              <label className="block w-full text-left text-sm">소속(팀)</label>
               <input
-                type="text"
                 value={userDepartment}
                 onChange={(e) => setUserDepartment(e.target.value)}
                 onBlur={() => handleBlur('userDepartment')}
-                className={`border w-full h-[35px] rounded-md pl-2 text-sm ${
-                  errors.userDepartment ? 'border-red-500' : 'focus:border-blue-900'
-                }`}
+                className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 ${errors.userDepartment ? 'border-red-500' : ''}`}
               />
-              {errors.userDepartment && (
-                <p className="text-red-500 text-xs">{errors.userDepartment}</p>
-              )}
+              {errors.userDepartment && <p className="text-red-500 text-left text-xs">{errors.userDepartment}</p>}
             </div>
 
             <div className="space-y-2 w-[280px]">
-              <label className="flex items-center gap-1 text-sm">
-                <span className="text-gray-500">[필수]</span> 개인정보 수집 및 이용 동의
+              <label className="w-full text-sm">
+                <span className='text-gray-500'>[필수]</span>
+                개인정보 수집 및 이용 동의
                 <input
                   type="checkbox"
                   checked={userPrivacyAgree}
                   onChange={() => setUserPrivacyAgree(!userPrivacyAgree)}
-                  className="ml-2 h-3 w-3"
+                  className="form-checkbox h-3 w-3 text-blue-800 ml-1"
                 />
-                <button
-                  type="button"
-                  className="text-sm text-blue-800 hover:underline"
-                  onClick={handlePrivacyAgree}
-                >
-                  약관 전체 보기
-                </button>
+                <button type="button" className="text-sm text-blue-800 hover:underline" onClick={handlePrivacyAgree}>약관 전체 보기</button>
               </label>
-              {errors.userPrivacyAgree && (
-                <p className="text-red-500 text-xs">{errors.userPrivacyAgree}</p>
-              )}
+              {errors.userPrivacyAgree && <p className="text-red-500 text-left text-xs">{errors.userPrivacyAgree}</p>}
             </div>
 
             <button
               type="submit"
-              className="bg-blue-800 text-white rounded w-[200px] h-[40px] hover:bg-blue-900"
+              className="rounded bg-blue-800 w-[200px] h-[40px] font-medium text-white hover:bg-blue-900"
             >
               회원가입 완료
             </button>
           </form>
 
-          <p className="text-sm text-gray-600 text-center mt-2">
-            이미 계정이 있으신가요?{' '}
-            <a href="/" className="text-blue-800 hover:underline">
-              로그인
-            </a>
-          </p>
+          <div className="text-center">
+            <p className="text-sm text-gray-600">
+              이미 계정이 있으신가요?
+              <a href="/" className="text-blue-800 hover:underline">
+                로그인
+              </a>
+            </p>
+          </div>
         </div>
       </div>
 
