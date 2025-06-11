@@ -1,15 +1,19 @@
-// src/pages/main/KakaoSignUp.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../config/api';
+import { useSearchParams } from 'react-router-dom';
 import PrivacyAgreeModal from '../../components/modals/PrivacyAgreeModal';
 
 export const KakaoSignUp = () => {
   const navigate = useNavigate();
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [searchParams] = useSearchParams();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [provider, setProvider] = useState('');
   const [providerId, setProviderId] = useState('');
+  const [name, setName] = useState('');
+  const [userId, setUserId] = useState('');
   const [userPhone, setUserPhone] = useState('');
   const [userPhoneCheck, setUserPhoneCheck] = useState('');
   const [userDepartment, setUserDepartment] = useState('');
@@ -23,6 +27,58 @@ export const KakaoSignUp = () => {
     userBirth: '',
     userPrivacyAgree: '',
   });
+
+  useEffect(() => {
+    const providerParam = searchParams.get('provider');
+    const providerIdParam = searchParams.get('providerId');
+    const userNameParam = searchParams.get('name');
+    const userIdParam = searchParams.get('userId');
+
+    if (providerParam) setProvider(providerParam);
+    if (providerIdParam) setProviderId(providerIdParam);
+    if (userNameParam) setName(userNameParam);
+    if (userIdParam) setUserId(userIdParam);
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (provider && providerId) {
+      return;
+    }
+    if (provider === '' && providerId === '') {
+      return;
+    }
+    alert('잘못된 접근입니다.');
+    navigate('/');
+  }, [provider, providerId]);
+
+  const sendSmsCode = async () => {
+    try {
+      const res = await api.post('http://localhost:8081/api/sms/send', { phoneNumber: userPhone });
+      alert(res.data);
+    } catch (error) {
+      alert('인증번호 발송 실패');
+    }
+  };
+
+  const verifySmsCode = async () => {
+    try {
+      const res = await api.post('http://localhost:8081/api/sms/verify', {
+        phoneNumber: userPhone,
+        code: userPhoneCheck,
+      });
+      if (res.data.verified) {
+        alert('인증에 성공했습니다.');
+        setIsPhoneVerified(true);
+      } else {
+        alert('인증에 실패하였습니다.');
+        setIsPhoneVerified(false);
+      }
+    } catch (error) {
+      alert('인증 확인 실패');
+      setIsPhoneVerified(false);
+    }
+  };
+
 
   const birthRegex = /^(19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])$/;
 
@@ -44,6 +100,11 @@ export const KakaoSignUp = () => {
       isValid = false;
     } else {
       formErrors.userPhoneCheck = '';
+    }
+
+    if (!isPhoneVerified) {
+      formErrors.userPhoneCheck = '전화번호 인증이 필요합니다.';
+      isValid = false;
     }
 
     if (!userDepartment) {
@@ -77,6 +138,8 @@ export const KakaoSignUp = () => {
       await api.post('/api/users/signup', {
         provider,
         providerId,
+        name,
+        userId,
         phone: userPhone,
         department: userDepartment,
         birth: userBirth,
@@ -137,8 +200,10 @@ export const KakaoSignUp = () => {
             onSubmit={handleSignUp}
             className="flex justify-center items-center flex-col space-y-4 w-[350px]"
           >
-            <input type="hidden" value={provider} />
-            <input type="hidden" value={providerId} />
+            <input type="hidden" name="provider" value={provider} />
+            <input type="hidden" name="providerId" value={providerId} />
+            <input type="hidden" name="name" value={name} />
+            <input type="hidden" name="userId" value={userId} />
 
             <div className="space-y-2 w-[280px]">
               <label className="block w-full text-left text-sm">생년월일</label>
@@ -164,19 +229,22 @@ export const KakaoSignUp = () => {
                   onBlur={() => handleBlur('userPhone')}
                   className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userPhone ? 'border-red-500' : ''}`}
                 />
-                <button type='button' className='border w-[50px] h-[35px] rounded-md text-sm hover:bg-gray-100'>발송</button>
+                <button type='button' className='border w-[50px] h-[35px] rounded-md text-sm hover:bg-gray-100' onClick={sendSmsCode}>발송</button>
               </div>
               {errors.userPhone && <p className="text-red-500 text-left text-xs">{errors.userPhone}</p>}
             </div>
 
             <div className="space-y-2 w-[280px]">
               <label className="block w-full text-left text-sm">인증번호 입력</label>
-              <input
-                value={userPhoneCheck}
-                onChange={(e) => setUserPhoneCheck(e.target.value)}
-                onBlur={() => handleBlur('userPhoneCheck')}
-                className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userPhoneCheck ? 'border-red-500' : ''}`}
-              />
+              <div className='flex gap-2'>
+                <input
+                  value={userPhoneCheck}
+                  onChange={(e) => setUserPhoneCheck(e.target.value)}
+                  onBlur={() => handleBlur('userPhoneCheck')}
+                  className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userPhoneCheck ? 'border-red-500' : ''}`}
+                />
+                <button type='button' className='border w-[50px] h-[35px] rounded-md text-sm hover:bg-gray-100' onClick={verifySmsCode}>확인</button>
+              </div>
               {errors.userPhoneCheck && <p className="text-red-500 text-left text-xs">{errors.userPhoneCheck}</p>}
             </div>
 

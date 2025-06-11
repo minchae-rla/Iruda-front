@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../config/api';
-import { SetPw } from './SetPw';
 
 export const FindPw = () => {
   const navigate = useNavigate();
@@ -11,7 +10,6 @@ export const FindPw = () => {
   const [userBirth, setUserBirth] = useState('');
   const [userPhone, setUserPhone] = useState('');
   const [userPhoneCheck, setUserPhoneCheck] = useState('');
-  const [id, setId] = useState('');
 
   const [errors, setErrors] = useState({
     userId: '',

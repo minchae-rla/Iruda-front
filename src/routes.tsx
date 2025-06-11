@@ -1,10 +1,10 @@
-import { Login } from "./pages/main/Login";
+import { Login } from "./pages/auth/Login";
 import { Home } from "./pages/main/Home";
-import { SignUp } from "./pages/main/SignUp";
-import { FindId } from "./pages/main/FindId";
-import { FindPw } from "./pages/main/FindPw";
-import { SetPw } from "./pages/main/SetPw";
-import { KakaoSignUp } from "./pages/main/KakaoSignUp";
+import { SignUp } from "./pages/auth/SignUp";
+import { FindId } from "./pages/auth/FindId";
+import { FindPw } from "./pages/auth/FindPw";
+import { SetPw } from "./pages/auth/SetPw";
+import { KakaoSignUp } from "./pages/auth/KakaoSignUp";
 
 const routes = [
   {

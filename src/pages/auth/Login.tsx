@@ -41,6 +41,14 @@ const handleKakaoLogin = async () => {
   }
 };
 
+const handlNaverLogin = async () => {
+  alert("준비중인 기능입니다.")
+}
+
+const handleGoogleLogin = async () => {
+  alert("준비중인 기능입니다.")
+}
+
   const handleSignUp = () => navigate('/signUp');
   const handleFindId = () => navigate('/findId');
   const handleFindPw = () => navigate('/findPw');
@@ -72,8 +80,8 @@ const handleKakaoLogin = async () => {
         <p className='text-sm text-gray-600'>소셜로 간편하게 로그인</p>
         <div className='flex gap-7'>
           <img src="/img/kakao.png" className='w-10 h-auto hover:cursor-pointer' onClick={handleKakaoLogin} />
-          <img src="/img/naver.png" className='w-10 h-auto hover:cursor-pointer' />
-          <img src="/img/google.png" className='w-10 h-auto hover:cursor-pointer' />
+          <img src="/img/naver.png" className='w-10 h-auto hover:cursor-pointer' onClick={handlNaverLogin} />
+          <img src="/img/google.png" className='w-10 h-auto hover:cursor-pointer' onClick={handleGoogleLogin}/>
         </div>
       </div>
       <div className="flex justify-center items-center">

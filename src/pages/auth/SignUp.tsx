@@ -6,6 +6,7 @@ import PrivacyAgreeModal from '../../components/modals/PrivacyAgreeModal';
 export const SignUp = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
 
 
   const [userName, setUserName] = useState('');
@@ -60,6 +61,34 @@ export const SignUp = () => {
       }
     } catch (error) {
       console.error('아이디 중복 체크 실패:', error);
+    }
+  };
+
+  const sendSmsCode = async () => {
+    try {
+      const res = await api.post('http://localhost:8081/api/sms/send', { phoneNumber: userPhone });
+      alert(res.data);
+    } catch (error) {
+      alert('인증번호 발송 실패');
+    }
+  };
+
+  const verifySmsCode = async () => {
+    try {
+      const res = await api.post('http://localhost:8081/api/sms/verify', {
+        phoneNumber: userPhone,
+        code: userPhoneCheck,
+      });
+      if (res.data.verified) {
+        alert('인증에 성공했습니다.');
+        setIsPhoneVerified(true);
+      } else {
+        alert('인증에 실패하였습니다.');
+        setIsPhoneVerified(false);
+      }
+    } catch (error) {
+      alert('인증 확인 실패');
+      setIsPhoneVerified(false);
     }
   };
 
@@ -127,6 +156,11 @@ export const SignUp = () => {
       isValid = false;
     } else {
       formErrors.userPhoneCheck = '';
+    }
+
+    if (!isPhoneVerified) {
+      formErrors.userPhoneCheck = '전화번호 인증이 필요합니다.';
+      isValid = false;
     }
 
     if (!userDepartment) {
@@ -333,19 +367,22 @@ export const SignUp = () => {
                   onBlur={() => handleBlur('userPhone')}
                   className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userPhone ? 'border-red-500' : ''}`}
                 />
-                <button type='button' className='border w-[50px] h-[35px] rounded-md text-sm hover:bg-gray-100'>발송</button>
+                <button type='button' className='border w-[50px] h-[35px] rounded-md text-sm hover:bg-gray-100' onClick={sendSmsCode}>발송</button>
               </div>
               {errors.userPhone && <p className="text-red-500 text-left text-xs">{errors.userPhone}</p>}
             </div>
 
             <div className="space-y-2 w-[280px]">
               <label className="block w-full text-left text-sm">인증번호 입력</label>
-              <input
-                value={userPhoneCheck}
-                onChange={(e) => setUserPhoneCheck(e.target.value)}
-                onBlur={() => handleBlur('userPhoneCheck')}
-                className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userPhoneCheck ? 'border-red-500' : ''}`}
-              />
+              <div className='flex gap-2'>
+                <input
+                  value={userPhoneCheck}
+                  onChange={(e) => setUserPhoneCheck(e.target.value)}
+                  onBlur={() => handleBlur('userPhoneCheck')}
+                  className={`border w-[280px] h-[35px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2 placeholder:text-xs ${errors.userPhoneCheck ? 'border-red-500' : ''}`}
+                />
+                <button type='button' className='border w-[50px] h-[35px] rounded-md text-sm hover:bg-gray-100' onClick={verifySmsCode}>확인</button>
+              </div>
               {errors.userPhoneCheck && <p className="text-red-500 text-left text-xs">{errors.userPhoneCheck}</p>}
             </div>
 
@@ -391,8 +428,8 @@ export const SignUp = () => {
               </a>
             </p>
           </div>
-        </div>
-      </div>
+        </div >
+      </div >
 
       {isModalOpen && <PrivacyAgreeModal onClose={handleCloseModal} onAgree={handleAgree} />}
     </>
