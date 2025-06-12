@@ -5,6 +5,7 @@ import { FindId } from "./pages/auth/FindId";
 import { FindPw } from "./pages/auth/FindPw";
 import { SetPw } from "./pages/auth/SetPw";
 import { KakaoSignUp } from "./pages/auth/KakaoSignUp";
+import KakaoOAuthCallback from "./pages/auth/KakaoOAuthCallback";
 
 const routes = [
   {
@@ -34,6 +35,10 @@ const routes = [
   {
     path: "/kakaoSignUp",
     element: <KakaoSignUp />
+  },
+  {
+    path: "/kakaoOAuthCallback",
+    element: <KakaoOAuthCallback />
   }
 ];
 
