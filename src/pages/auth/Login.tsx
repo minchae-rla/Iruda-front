@@ -42,11 +42,11 @@ const handleKakaoLogin = async () => {
 };
 
 const handlNaverLogin = async () => {
-  alert("준비중인 기능입니다.")
+  alert("준비중인 서비스입니다.")
 }
 
 const handleGoogleLogin = async () => {
-  alert("준비중인 기능입니다.")
+  alert("준비중인 서비스입니다.")
 }
 
   const handleSignUp = () => navigate('/signUp');
@@ -84,7 +84,7 @@ const handleGoogleLogin = async () => {
           <img src="/img/google.png" className='w-10 h-auto hover:cursor-pointer' onClick={handleGoogleLogin}/>
         </div>
       </div>
-      <div className="flex justify-center items-center">
+      <div className="flex justify-between items-center">
         <button onClick={handleSignUp} className="w-[85px] h-[40px] text-sm font-medium text-gray-500 hover:underline">회원가입</button>
         <button onClick={handleFindId} className="w-[85px] h-[40px] text-sm font-medium text-gray-500 hover:underline">아이디찾기</button>
         <button onClick={handleFindPw} className="w-[85px] h-[40px] text-sm font-medium text-gray-500 hover:underline">비밀번호찾기</button>

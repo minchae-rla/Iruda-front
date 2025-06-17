@@ -270,8 +270,8 @@ export const SignUp = () => {
 
   return (
     <>
-      <div className="flex justify-center items-center flex-col bg-white min-h-screen">
-        <div className="rounded-lg border-2 space-y-3 py-4">
+      <div className="flex justify-start items-center flex-col bg-white h-screen overflow-y-auto">
+        <div className="rounded-lg border-2 space-y-3 py-4 m-4">
           <div className="flex justify-center items-center gap-4">
             <img src="/img/logo.jpg" className="w-10 h-auto" />
             <h1 className="text-2xl text-blue-900 font-semibold">회원가입</h1>
@@ -409,7 +409,7 @@ export const SignUp = () => {
                 />
                 <button type="button" className="text-sm text-blue-800 hover:underline" onClick={handlePrivacyAgree}>약관 전체 보기</button>
               </label>
-              {errors.userPrivacyAgree && <p className="text-red-500 text-left text-xs">{errors.userPrivacyAgree}</p>}
+              {errors.userPrivacyAgree && <p className="text-red-500 text-center text-xs">{errors.userPrivacyAgree}</p>}
             </div>
 
             <button
