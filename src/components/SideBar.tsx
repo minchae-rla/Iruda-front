@@ -76,7 +76,7 @@ export const SideBar = () => {
               className="flex items-center gap-2 text-sm font-normal hover:bg-blue-50 px-2 py-1 rounded"
             >
               <span className="text-blue-500">#</span>
-              <span>{project.name}</span>
+              <span className='text-left truncate w-[180px]'>{project.name}</span>
             </button>
           ))}
         </div>
