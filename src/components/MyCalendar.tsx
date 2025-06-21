@@ -50,8 +50,8 @@ const MyCalendar = () => {
           <div
             key={day}
             className={`
-              ${idx === 0 ? 'text-red-500' : ''}  {/* 일요일 (빨간색) */}
-              ${idx === 6 ? 'text-blue-500' : ''} {/* 토요일 (파란색) */}
+              ${idx === 0 ? 'text-red-500' : ''} 
+              ${idx === 6 ? 'text-blue-500' : ''}
             `}
           >
             {day}
@@ -61,13 +61,13 @@ const MyCalendar = () => {
 
       <div className="grid grid-cols-7 text-center">
         {days.map((date, idx) => {
-          const dayOfWeek = date?.getDay(); // 0: 일요일, 6: 토요일
+          const dayOfWeek = date?.getDay(); 
           const textColor =
             dayOfWeek === 0
-              ? 'text-red-500'   // 일요일
+              ? 'text-red-500' 
               : dayOfWeek === 6
-              ? 'text-blue-500'  // 토요일
-              : 'text-black';    // 평일
+              ? 'text-blue-500'  
+              : 'text-black'; 
 
           return (
             <div
