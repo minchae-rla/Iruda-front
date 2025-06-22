@@ -3,7 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
 import AddProjectModal from './modals/AddProjectModal';
 
-export const SideBar = () => {
+interface SideBarProps {
+  onProjectSelect: (projectId: number) => void;
+}
+
+export const SideBar = ({ onProjectSelect }: SideBarProps) => { 
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,6 +27,10 @@ export const SideBar = () => {
 
   const handleAddProject = () => {
     setIsModalOpen(true);
+  };
+
+  const handleGetProject = (projectId: number) => {
+    onProjectSelect(projectId);
   };
 
   return (
@@ -74,6 +82,7 @@ export const SideBar = () => {
             <button
               key={project.id}
               className="flex items-center gap-2 text-sm font-normal hover:bg-blue-50 px-2 py-1 rounded"
+              onClick={() => handleGetProject(project.id)}  
             >
               <span className="text-blue-500">#</span>
               <span className='text-left truncate w-[180px]'>{project.name}</span>
