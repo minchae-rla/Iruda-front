@@ -1,5 +1,18 @@
 import React, { useState, useMemo } from 'react';
 
+interface Task {
+  id: number;
+  title: string;
+  content: string;
+  startDate: Date;
+  endDate: Date;
+  alarmSet: string;
+}
+
+interface MyCalendarProps {
+  tasks: Task[];
+}
+
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
 const getDaysInMonth = (year: number, month: number) => {
@@ -21,7 +34,7 @@ const getDaysInMonth = (year: number, month: number) => {
   return days;
 };
 
-const MyCalendar = () => {
+const MyCalendar = ({ tasks }: MyCalendarProps) => {
   const today = new Date();
   const [currentDate, setCurrentDate] = useState(new Date(today.getFullYear(), today.getMonth()));
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -61,13 +74,13 @@ const MyCalendar = () => {
 
       <div className="grid grid-cols-7 text-center">
         {days.map((date, idx) => {
-          const dayOfWeek = date?.getDay(); 
+          const dayOfWeek = date?.getDay();
           const textColor =
             dayOfWeek === 0
-              ? 'text-red-500' 
+              ? 'text-red-500'
               : dayOfWeek === 6
-              ? 'text-blue-500'  
-              : 'text-black'; 
+                ? 'text-blue-500'
+                : 'text-black';
 
           return (
             <div
