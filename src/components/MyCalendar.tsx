@@ -92,7 +92,6 @@ const MyCalendar = ({ tasks }: MyCalendarProps) => {
               <div className={`font-semibold text-xs ${textColor}`}>
                 {date ? date.getDate() : ""}
               </div>
-              {/* 일정 내용 */}
               <div className="mt-1 text-[10px] text-left text-gray-600">
                 {date ? "일정 내용 예시" : ""}
               </div>
