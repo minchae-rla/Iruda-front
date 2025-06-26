@@ -48,6 +48,8 @@ const MyCalendar = ({ tasks }: MyCalendarProps) => {
   const moveMonth = (delta: number) => {
     const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + delta);
     setCurrentDate(newDate);
+
+    console.log(tasks);
   };
 
   return (
