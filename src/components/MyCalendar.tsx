@@ -49,6 +49,7 @@ const MyCalendar = ({ tasks }: MyCalendarProps) => {
     const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + delta);
     setCurrentDate(newDate);
 
+    //나중에지우기
     console.log(tasks);
   };
 
