@@ -19,7 +19,7 @@ const getDaysInMonth = (year: number, month: number) => {
   const date = new Date(year, month, 1);
   const days = [];
 
-  // 시작 요일 맞추기
+  // 시작 요일 맞추기 (전 달의 빈 칸)
   const startDay = date.getDay();
   for (let i = 0; i < startDay; i++) {
     days.push(null);
@@ -48,33 +48,32 @@ const MyCalendar = ({ tasks }: MyCalendarProps) => {
   const moveMonth = (delta: number) => {
     const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + delta);
     setCurrentDate(newDate);
-
-    //나중에지우기
-    console.log(tasks);
   };
 
   return (
     <div className="p-4">
-      <div className="flex justify-between my-2">
-        <button onClick={() => moveMonth(-1)}>◀ {currentDate.getMonth() + 1}월</button>
-        <span>{currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월</span>
+      {/* 상단 월 이동 */}
+      <div className="flex justify-between my-2 items-center">
+        <button onClick={() => moveMonth(-1)}>◀ {currentDate.getMonth()}월</button>
+        <span className="font-bold text-lg">
+          {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
+        </span>
         <button onClick={() => moveMonth(1)}>{currentDate.getMonth() + 2}월 ▶</button>
       </div>
 
+      {/* 요일 표시 */}
       <div className="grid grid-cols-7 text-center font-bold">
         {WEEKDAYS.map((day, idx) => (
           <div
             key={day}
-            className={`
-              ${idx === 0 ? 'text-red-500' : ''} 
-              ${idx === 6 ? 'text-blue-500' : ''}
-            `}
+            className={`${idx === 0 ? 'text-red-500' : ''} ${idx === 6 ? 'text-blue-500' : ''}`}
           >
             {day}
           </div>
         ))}
       </div>
 
+      {/* 날짜 셀 */}
       <div className="grid grid-cols-7 text-center">
         {days.map((date, idx) => {
           const dayOfWeek = date?.getDay();
@@ -82,8 +81,13 @@ const MyCalendar = ({ tasks }: MyCalendarProps) => {
             dayOfWeek === 0
               ? 'text-red-500'
               : dayOfWeek === 6
-                ? 'text-blue-500'
-                : 'text-black';
+              ? 'text-blue-500'
+              : 'text-black';
+
+          // 해당 날짜에 맞는 일정들만 필터링
+          const dayTasks = date
+            ? tasks.filter(task => formatted(task.startDate) === formatted(date))
+            : [];
 
           return (
             <div
@@ -93,10 +97,16 @@ const MyCalendar = ({ tasks }: MyCalendarProps) => {
               onClick={() => date && setSelectedDate(date)}
             >
               <div className={`font-semibold text-xs ${textColor}`}>
-                {date ? date.getDate() : ""}
+                {date ? date.getDate() : ''}
               </div>
-              <div className="mt-1 text-[10px] text-left text-gray-600">
-                {date ? "일정 내용 예시" : ""}
+
+              {/* 일정 출력 */}
+              <div className="mt-1 text-[10px] text-left text-gray-600 overflow-auto w-full">
+                {dayTasks.map(task => (
+                  <div key={task.id} className="truncate">
+                    • {task.title}
+                  </div>
+                ))}
               </div>
             </div>
           );
