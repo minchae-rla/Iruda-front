@@ -50,6 +50,8 @@ const MyCalendar = ({ tasks }: MyCalendarProps) => {
     setCurrentDate(newDate);
   };
 
+  console.log(tasks);
+
   return (
     <div className="p-4">
       {/* 상단 월 이동 */}
