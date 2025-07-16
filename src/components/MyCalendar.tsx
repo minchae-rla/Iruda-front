@@ -35,6 +35,9 @@ const getDaysInMonth = (year: number, month: number) => {
 };
 
 const MyCalendar = ({ tasks }: MyCalendarProps) => {
+
+  console.log(tasks);
+
   const today = new Date();
   const [currentDate, setCurrentDate] = useState(new Date(today.getFullYear(), today.getMonth()));
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
