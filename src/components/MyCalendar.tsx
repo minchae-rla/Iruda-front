@@ -88,6 +88,7 @@ const MyCalendar = ({ tasks }: MyCalendarProps) => {
               : 'text-black';
 
           // 해당 날짜에 맞는 일정들만 필터링
+          // 날짜채우기
           const dayTasks = date
             ? tasks.filter(task => formatted(task.startDate) === formatted(date))
             : [];
