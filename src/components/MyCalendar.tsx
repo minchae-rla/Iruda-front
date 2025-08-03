@@ -54,6 +54,7 @@ const MyCalendar = ({ tasks }: MyCalendarProps) => {
   };
 
   return (
+    <>
     <div className="p-4">
       {/* 상단 월 이동 */}
       <div className="flex justify-between my-2 items-center">
@@ -62,6 +63,12 @@ const MyCalendar = ({ tasks }: MyCalendarProps) => {
           {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
         </span>
         <button onClick={() => moveMonth(1)}>{currentDate.getMonth() + 2}월 ▶</button>
+      </div>
+
+      <div className='flex justify-end p-2'>
+        <button type="submit" className="rounded bg-blue-800 w-[100px] h-[30px] text-1xl font-medium text-white hover:bg-blue-900">
+          일정추가
+        </button>
       </div>
 
       {/* 요일 표시 */}
@@ -117,6 +124,7 @@ const MyCalendar = ({ tasks }: MyCalendarProps) => {
         })}
       </div>
     </div>
+    </>
   );
 };
 
