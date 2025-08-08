@@ -29,7 +29,13 @@ export const Home = () => {
       <div className="flex flex-1 overflow-hidden">
         <SideBar onProjectSelect={setSelectedProjectId} />
         <main className="flex-1 overflow-auto p-4">
-          <MyCalendar tasks={tasks} />
+          {selectedProjectId && (
+            <MyCalendar 
+              tasks={tasks} 
+              onTaskAdded={fetchTasks} 
+              projectId={selectedProjectId} 
+            />
+          )}
         </main>
       </div>
     </div>
