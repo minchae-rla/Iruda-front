@@ -39,6 +39,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ onClose, onTaskAdded, projectId, 
   const handleSubmit = async () => {
     try {
       await api.post(`/api/tasks/add/${projectId}`, {
+        projectId,
         title,
         content,
         startDate,

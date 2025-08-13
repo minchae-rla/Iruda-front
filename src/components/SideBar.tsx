@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../config/api';
 import AddProjectModal from './modals/AddProjectModal';
+import api from '../config/api';
 
 interface SideBarProps {
   onProjectSelect: (projectId: number) => void;
+  onViewChange: (view: 'calendar' | 'all' | 'today' | 'tomorrow' | 'completed') => void;
 }
 
-export const SideBar = ({ onProjectSelect }: SideBarProps) => { 
-  const navigate = useNavigate();
+export const SideBar = ({ onProjectSelect, onViewChange }: SideBarProps) => {
   const [projects, setProjects] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   const fetchProjects = async () => {
     try {
@@ -25,55 +25,33 @@ export const SideBar = ({ onProjectSelect }: SideBarProps) => {
     fetchProjects();
   }, []);
 
-  const handleAddProject = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleGetProject = (projectId: number) => {
-    onProjectSelect(projectId);
-  };
+  const handleAddProject = () => setIsModalOpen(true);
 
   return (
     <>
       <aside className="w-64 border-r bg-background">
-        <div className="flex flex-col justify-center items-start gap-4 p-4 border-b">
-          <div className="flex gap-2">
-            <button
-              className="flex justify-center items-center gap-2 hover:bg-blue-50 px-2 py-1 rounded"
-              onClick={handleAddProject}
-            >
-              <img src="/img/edit_project.png" className="w-[20px] h-auto" />
-              <span className="text-sm">프로젝트 추가</span>
-            </button>
-          </div>
 
-          <div className="flex gap-2">
-            <button className="flex justify-center items-center gap-2 hover:bg-blue-50 px-2 py-1 rounded">
-              <img src="/img/all_schedule.png" className="w-[20px] h-auto" />
-              <span className="text-sm">전체 일정</span>
-            </button>
-          </div>
-
-          <div className="flex gap-2">
-            <button className="flex justify-center items-center gap-2 hover:bg-blue-50 px-2 py-1 rounded">
-              <img src="/img/today.png" className="w-[20px] h-auto" />
-              <span className="text-sm">오늘</span>
-            </button>
-          </div>
-
-          <div className="flex gap-2">
-            <button className="flex justify-center items-center gap-2 hover:bg-blue-50 px-2 py-1 rounded">
-              <img src="/img/tomorrow.png" className="w-[20px] h-auto" />
-              <span className="text-sm">내일</span>
-            </button>
-          </div>
-
-          <div className="flex gap-2">
-            <button className="flex justify-center items-center gap-2 hover:bg-blue-50 px-2 py-1 rounded">
-              <img src="/img/complete_blue.png" className="w-[20px] h-auto" />
-              <span className="text-sm">완료된 일정</span>
-            </button>
-          </div>
+        <div className="flex flex-col gap-2 p-4 border-b">
+          <button onClick={() => onViewChange('all')} className="flex gap-2 items-center px-2 py-1 rounded hover:bg-blue-50">
+            <img src="/img/all_schedule.png" className="w-[20px] h-auto" />
+            전체 일정
+          </button>
+          <button onClick={() => onViewChange('today')} className="flex gap-2 items-center px-2 py-1 rounded hover:bg-blue-50">
+            <img src="/img/today.png" className="w-[20px] h-auto" />
+            오늘
+          </button>
+          <button onClick={() => onViewChange('tomorrow')} className="flex gap-2 items-center px-2 py-1 rounded hover:bg-blue-50">
+            <img src="/img/tomorrow.png" className="w-[20px] h-auto" />
+            내일
+          </button>
+          <button onClick={() => onViewChange('completed')} className="flex gap-2 items-center px-2 py-1 rounded hover:bg-blue-50">
+            <img src="/img/complete_blue.png" className="w-[20px] h-auto" />
+            완료된 일정
+          </button>
+          <button onClick={handleAddProject} className="flex gap-2 items-center px-2 py-1 rounded hover:bg-blue-50">
+            <img src="/img/edit_project.png" className="w-[20px] h-auto" />
+            프로젝트 추가
+          </button>
         </div>
 
         <div className="flex flex-col justify-center items-start gap-2 p-4">
@@ -81,11 +59,11 @@ export const SideBar = ({ onProjectSelect }: SideBarProps) => {
           {projects.map((project: any) => (
             <button
               key={project.id}
-              className="flex items-center gap-2 text-sm font-normal hover:bg-blue-50 px-2 py-1 rounded"
-              onClick={() => handleGetProject(project.id)}  
+              className="flex items-center gap-2 text-sm px-2 py-1 rounded hover:bg-blue-50 truncate w-[220px]"
+              onClick={() => onProjectSelect(project.id)}
             >
               <span className="text-blue-500">#</span>
-              <span className='text-left truncate w-[180px]'>{project.name}</span>
+              <span className="truncate">{project.name}</span>
             </button>
           ))}
         </div>

@@ -5,16 +5,16 @@ interface Task {
   id: number;
   title: string;
   content: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: Date | string;
+  endDate: Date | string;
   alarmSet: string;
-  color: string;
+  color: string; // 예: 'red-400', 'blue-400' (tailwind 색상 suffix)
 }
 
 interface MyCalendarProps {
   tasks: Task[];
-  onTaskAdded: () => void;   
-  projectId: number;             
+  onTaskAdded: () => void;
+  projectId: number;
 }
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
@@ -36,11 +36,29 @@ const getDaysInMonth = (year: number, month: number) => {
   return days;
 };
 
-const formatted = (date: Date) => date.toISOString().split('T')[0];
+const formatted = (date: Date | string | null | undefined) => {
+  try {
+    return new Date(date!).toISOString().split('T')[0];
+  } catch {
+    return '';
+  }
+};
 
-const isBetween = (date: Date, start: Date, end: Date) => {
+const isBetween = (date: Date, start: Date | string, end: Date | string) => {
   const d = formatted(date);
   return formatted(start) <= d && d <= formatted(end);
+};
+
+const tailwindColorMap: Record<string, string> = {
+  'red-400': '#f87171',
+  'orange-400': '#fb923c',
+  'yellow-400': '#facc15',
+  'green-400': '#4ade80',
+  'blue-400': '#60a5fa',
+  'indigo-400': '#818cf8',
+  'purple-400': '#a78bfa',
+  'pink-400': '#f472b6',
+  'gray-400': '#9ca3af',
 };
 
 const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
@@ -56,6 +74,7 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
   const moveMonth = (delta: number) => {
     const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + delta);
     setCurrentDate(newDate);
+    setSelectedDate(null);
   };
 
   const handleAddTask = () => {
@@ -65,7 +84,6 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
   return (
     <>
       <div className="p-4">
-        {/* 월 이동 */}
         <div className="flex justify-between my-2 items-center">
           <button onClick={() => moveMonth(-1)}>◀ {currentDate.getMonth()}월</button>
           <span className="font-bold text-lg">
@@ -74,8 +92,7 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
           <button onClick={() => moveMonth(1)}>{currentDate.getMonth() + 2}월 ▶</button>
         </div>
 
-        {/* 일정추가 버튼 */}
-        <div className='flex justify-end p-2'>
+        <div className="flex justify-end p-2">
           <button
             className="rounded bg-blue-800 w-[100px] h-[30px] text-1xl font-medium text-white hover:bg-blue-900"
             onClick={handleAddTask}
@@ -84,7 +101,6 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
           </button>
         </div>
 
-        {/* 요일 */}
         <div className="grid grid-cols-7 text-center font-bold">
           {WEEKDAYS.map((day, idx) => (
             <div
@@ -96,23 +112,24 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
           ))}
         </div>
 
-        {/* 날짜 셀 */}
         <div className="grid grid-cols-7 text-center">
           {days.map((date, idx) => {
             const dayOfWeek = date?.getDay();
             const textColor =
               dayOfWeek === 0 ? 'text-red-500' :
-              dayOfWeek === 6 ? 'text-blue-500' :
-              'text-black';
+                dayOfWeek === 6 ? 'text-blue-500' :
+                  'text-black';
 
             const dayTasks = date
-              ? tasks.filter(task => isBetween(date, task.startDate, task.endDate))
+              ? tasks
+                .filter(task => isBetween(date, task.startDate, task.endDate))
+                .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
               : [];
 
             return (
               <div
                 key={idx}
-                className={`border h-32 p-1 flex flex-col items-start justify-start cursor-pointer text-sm
+                className={`border h-36 p-1 flex flex-col items-start justify-start cursor-pointer text-sm
                 ${date && selectedDate?.toDateString() === date.toDateString() ? 'bg-sky-50' : ''}`}
                 onClick={() => date && setSelectedDate(date)}
               >
@@ -120,29 +137,38 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
                   {date ? date.getDate() : ''}
                 </div>
 
-                {/* 일정 바 표시 */}
-                <div className="mt-1 text-[10px] text-left w-full">
-                  {dayTasks.map(task => {
-                    const isStart = formatted(task.startDate) === formatted(date!);
-                    const isEnd = formatted(task.endDate) === formatted(date!);
+                <div className="mt-1 text-[10px] text-left w-full space-y-0.5">
+                  {dayTasks.map((task, i) => {
+                    const taskStart = formatted(task.startDate);
+                    const taskEnd = formatted(task.endDate);
+                    const current = formatted(date!);
+
+                    const isStart = taskStart === current;
+                    const isEnd = taskEnd === current;
                     const isOnlyOneDay = isStart && isEnd;
 
                     const roundedClass = isOnlyOneDay
                       ? 'rounded-full'
                       : isStart
-                      ? 'rounded-l-full'
-                      : isEnd
-                      ? 'rounded-r-full'
-                      : '';
+                        ? 'rounded-l-full'
+                        : isEnd
+                          ? 'rounded-r-full'
+                          : '';
 
+                    const bgColor = tailwindColorMap[task.color] || '#60a5fa'; 
                     return (
                       <div
-                        key={task.id}
-                        className={`truncate px-1 py-0.5 mb-0.5 text-white text-[10px] ${roundedClass}`}
+                        key={task.id + '-' + i}
+                        className={`truncate px-1 text-white text-[10px] ${roundedClass}`}
                         style={{
-                          backgroundColor: task.color,
+                          backgroundColor: bgColor,
                           textAlign: 'center',
+                          height: '20px',
+                          lineHeight: '20px',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
                         }}
+                        title={task.title}
                       >
                         {isStart ? task.title : ''}
                       </div>
@@ -159,7 +185,7 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
         <AddTaskModal
           onClose={() => setIsModalOpen(false)}
           onTaskAdded={() => {
-            onTaskAdded(); 
+            onTaskAdded();
             setIsModalOpen(false);
           }}
           selectedDate={selectedDate}
