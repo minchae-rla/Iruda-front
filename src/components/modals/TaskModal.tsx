@@ -30,7 +30,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ onClose, onTaskAdded, projectId, 
 
   useEffect(() => {
     if (selectedDate) {
-      const formatted = selectedDate.toISOString().split('T')[0];
+      const formatted = selectedDate.toLocaleDateString('en-CA');
       setStartDate(formatted);
       setEndDate(formatted);
     }

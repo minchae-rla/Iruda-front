@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import AddTaskModal from './modals/AddTaskModal';
+import AddTaskModal from './modals/TaskModal';
 
 interface Task {
   id: number;
@@ -8,7 +8,7 @@ interface Task {
   startDate: Date | string;
   endDate: Date | string;
   alarmSet: string;
-  color: string; // 예: 'red-400', 'blue-400' (tailwind 색상 suffix)
+  color: string; 
 }
 
 interface MyCalendarProps {
@@ -67,6 +67,9 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+
+  const [buttonPosition, setButtonPosition] = useState<{ top: number; left: number } | null>(null);
+
   const days = useMemo(() => {
     return getDaysInMonth(currentDate.getFullYear(), currentDate.getMonth());
   }, [currentDate]);
@@ -75,10 +78,7 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
     const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + delta);
     setCurrentDate(newDate);
     setSelectedDate(null);
-  };
-
-  const handleAddTask = () => {
-    setIsModalOpen(true);
+    setButtonPosition(null); 
   };
 
   return (
@@ -90,15 +90,6 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
             {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
           </span>
           <button onClick={() => moveMonth(1)}>{currentDate.getMonth() + 2}월 ▶</button>
-        </div>
-
-        <div className="flex justify-end p-2">
-          <button
-            className="rounded bg-blue-800 w-[100px] h-[30px] text-1xl font-medium text-white hover:bg-blue-900"
-            onClick={handleAddTask}
-          >
-            일정 등록
-          </button>
         </div>
 
         <div className="grid grid-cols-7 text-center font-bold">
@@ -131,7 +122,16 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
                 key={idx}
                 className={`border h-36 p-1 flex flex-col items-start justify-start cursor-pointer text-sm
                 ${date && selectedDate?.toDateString() === date.toDateString() ? 'bg-sky-50' : ''}`}
-                onClick={() => date && setSelectedDate(date)}
+                onClick={(e) => {
+                  if (date) {
+                    setSelectedDate(date);
+                    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                    setButtonPosition({
+                      top: rect.top + window.scrollY + 20,
+                      left: rect.left + window.scrollX + rect.width / 2 - 50,
+                    });
+                  }
+                }}
               >
                 <div className={`font-semibold text-xs ${textColor}`}>
                   {date ? date.getDate() : ''}
@@ -155,7 +155,7 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
                           ? 'rounded-r-full'
                           : '';
 
-                    const bgColor = tailwindColorMap[task.color] || '#60a5fa'; 
+                    const bgColor = tailwindColorMap[task.color] || '#60a5fa';
                     return (
                       <div
                         key={task.id + '-' + i}
@@ -181,12 +181,29 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
         </div>
       </div>
 
+      {buttonPosition && (
+        <button
+          className="fixed z-50 bg-white text-black px-3 py-1 rounded border border-gray-200 shadow hover:bg-gray-100"
+          style={{ top: buttonPosition.top, left: buttonPosition.left }}
+          onClick={() => {
+            setIsModalOpen(true);
+            setButtonPosition(null); 
+          }}
+        >
+          일정 등록
+        </button>
+      )}
+
       {isModalOpen && (
         <AddTaskModal
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            setButtonPosition(null);
+          }}
           onTaskAdded={() => {
             onTaskAdded();
             setIsModalOpen(false);
+            setButtonPosition(null);
           }}
           selectedDate={selectedDate}
           projectId={projectId}
