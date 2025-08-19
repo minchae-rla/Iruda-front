@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import AddTaskModal from './modals/TaskModal';
+import TaskModal from './modals/TaskModal';
+import DetailTaskModal from './modals/DetailTaskModal';
 
 interface Task {
   id: number;
@@ -195,7 +196,7 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
       )}
 
       {isModalOpen && (
-        <AddTaskModal
+        <TaskModal
           onClose={() => {
             setIsModalOpen(false);
             setButtonPosition(null);
