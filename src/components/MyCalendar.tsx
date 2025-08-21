@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import TaskModal from './modals/TaskModal';
-import DetailTaskModal from './modals/DetailTaskModal';
 
 interface Task {
   id: number;
@@ -23,11 +22,9 @@ const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 const getDaysInMonth = (year: number, month: number) => {
   const date = new Date(year, month, 1);
   const days = [];
-
   const startDay = date.getDay();
-  for (let i = 0; i < startDay; i++) {
-    days.push(null);
-  }
+
+  for (let i = 0; i < startDay; i++) days.push(null);
 
   while (date.getMonth() === month) {
     days.push(new Date(date));
@@ -67,13 +64,10 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
   const [currentDate, setCurrentDate] = useState(new Date(today.getFullYear(), today.getMonth()));
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [buttonPosition, setButtonPosition] = useState<{ top: number; left: number } | null>(null);
 
-  const days = useMemo(() => {
-    return getDaysInMonth(currentDate.getFullYear(), currentDate.getMonth());
-  }, [currentDate]);
+  const days = useMemo(() => getDaysInMonth(currentDate.getFullYear(), currentDate.getMonth()), [currentDate]);
 
   const moveMonth = (delta: number) => {
     const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + delta);
@@ -109,23 +103,24 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
             const dayOfWeek = date?.getDay();
             const textColor =
               dayOfWeek === 0 ? 'text-red-500' :
-                dayOfWeek === 6 ? 'text-blue-500' :
-                  'text-black';
+              dayOfWeek === 6 ? 'text-blue-500' :
+              'text-black';
 
             const dayTasks = date
               ? tasks
-                .filter(task => isBetween(date, task.startDate, task.endDate))
-                .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+                  .filter(task => isBetween(date, task.startDate, task.endDate))
+                  .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
               : [];
 
             return (
               <div
                 key={idx}
                 className={`border h-36 p-1 flex flex-col items-start justify-start cursor-pointer text-sm
-                ${date && selectedDate?.toDateString() === date.toDateString() ? 'bg-sky-50' : ''}`}
+                  ${date && selectedDate?.toDateString() === date.toDateString() ? 'bg-sky-50' : ''}`}
                 onClick={(e) => {
                   if (date) {
                     setSelectedDate(date);
+                    setSelectedTask(null); // 등록 모드
                     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
                     setButtonPosition({
                       top: rect.top + window.scrollY + 20,
@@ -170,6 +165,12 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
                           whiteSpace: 'nowrap',
                         }}
                         title={task.title}
+                        onClick={(e) => {
+                          e.stopPropagation(); // 셀 클릭 이벤트 막기
+                          setSelectedTask(task); // 수정 모드
+                          setSelectedDate(new Date(current));
+                          setIsModalOpen(true);
+                        }}
                       >
                         {isStart ? task.title : ''}
                       </div>
@@ -200,14 +201,17 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
           onClose={() => {
             setIsModalOpen(false);
             setButtonPosition(null);
+            setSelectedTask(null);
           }}
           onTaskAdded={() => {
             onTaskAdded();
             setIsModalOpen(false);
             setButtonPosition(null);
+            setSelectedTask(null);
           }}
           selectedDate={selectedDate}
           projectId={projectId}
+          task={selectedTask} 
         />
       )}
     </>

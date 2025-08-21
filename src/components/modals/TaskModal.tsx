@@ -6,6 +6,15 @@ interface TaskModalProps {
   onTaskAdded: () => void;
   projectId: number;
   selectedDate: Date | null;
+  task?: {
+    id: number;
+    title: string;
+    content: string;
+    startDate: Date | string;
+    endDate: Date | string;
+    alarmSet: string;
+    color: string;
+  } | null;
 }
 
 const tailwindColors = [
@@ -20,39 +29,75 @@ const tailwindColors = [
   'gray-400',
 ];
 
-const TaskModal: React.FC<TaskModalProps> = ({ onClose, onTaskAdded, projectId, selectedDate }) => {
+const formatted = (date: Date | string) => {
+  return new Date(date).toISOString().split('T')[0];
+};
+
+const TaskModal: React.FC<TaskModalProps> = ({
+  onClose,
+  onTaskAdded,
+  projectId,
+  selectedDate,
+  task,
+}) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [alarmSet, setAlarmSet] = useState(false);
-  const [color, setColor] = useState('blue-500');
+  const [color, setColor] = useState('blue-400');
 
+  // task가 있을 경우 수정 모드, 없으면 등록 모드
   useEffect(() => {
-    if (selectedDate) {
-      const formatted = selectedDate.toLocaleDateString('en-CA');
-      setStartDate(formatted);
-      setEndDate(formatted);
+    if (task) {
+      setTitle(task.title);
+      setContent(task.content);
+      setStartDate(formatted(task.startDate));
+      setEndDate(formatted(task.endDate));
+      setAlarmSet(task.alarmSet === 'on');
+      setColor(task.color);
+    } else if (selectedDate) {
+      const formattedDate = formatted(selectedDate);
+      setStartDate(formattedDate);
+      setEndDate(formattedDate);
+      setTitle('');
+      setContent('');
+      setAlarmSet(false);
+      setColor('blue-400');
     }
-  }, [selectedDate]);
+  }, [task, selectedDate]);
 
   const handleSubmit = async () => {
     try {
-      await api.post(`/api/tasks/add/${projectId}`, {
-        projectId,
-        title,
-        content,
-        startDate,
-        endDate,
-        alarmSet: alarmSet ? 'on' : 'off',
-        color,
-      });
+      if (task) {
+        // 수정 API 호출
+        await api.put(`/api/tasks/update/${task.id}`, {
+          projectId,
+          title,
+          content,
+          startDate,
+          endDate,
+          alarmSet: alarmSet ? 'on' : 'off',
+          color,
+        });
+      } else {
+        // 등록 API 호출
+        await api.post(`/api/tasks/add/${projectId}`, {
+          projectId,
+          title,
+          content,
+          startDate,
+          endDate,
+          alarmSet: alarmSet ? 'on' : 'off',
+          color,
+        });
+      }
 
       onTaskAdded();
       onClose();
     } catch (error) {
-      console.error('일정 추가 실패:', error);
-      alert('일정 추가에 실패했습니다.');
+      console.error('일정 저장 실패:', error);
+      alert('일정 저장에 실패했습니다.');
     }
   };
 
@@ -60,7 +105,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ onClose, onTaskAdded, projectId, 
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center animate-in fade-in duration-700">
       <div className="bg-white w-[450px] h-auto rounded-lg p-4">
         <div className="flex justify-between items-center p-3 border-b">
-          <h2 className="text-lg font-semibold">일정 등록</h2>
+          <h2 className="text-lg font-semibold">{task ? '일정 수정' : '일정 등록'}</h2>
           <button onClick={onClose}>
             <img src="/img/x.png" className="w-[25px] h-[25px]" alt="닫기" />
           </button>
@@ -134,8 +179,8 @@ const TaskModal: React.FC<TaskModalProps> = ({ onClose, onTaskAdded, projectId, 
                   key={c}
                   type="button"
                   onClick={() => setColor(c)}
-                  className={`
-                    w-7 h-7 rounded-full cursor-pointer
+                  className={`w-7 h-7 rounded-full cursor-pointer
+                    ${c === color ? 'ring-2 ring-offset-1 ring-black' : ''}
                     ${c === 'red-400' ? 'bg-red-400' : ''}
                     ${c === 'orange-400' ? 'bg-orange-400' : ''}
                     ${c === 'yellow-400' ? 'bg-yellow-400' : ''}
@@ -144,10 +189,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ onClose, onTaskAdded, projectId, 
                     ${c === 'indigo-400' ? 'bg-indigo-400' : ''}
                     ${c === 'purple-400' ? 'bg-purple-400' : ''}
                     ${c === 'pink-400' ? 'bg-pink-400' : ''}
-                    ${c === 'gray-400' ? 'bg-gray-400' : ''}
-                    ${color === c ? 'ring-2 ring-offset-1 ring-black' : ''}
-                    transition
-                  `}
+                    ${c === 'gray-400' ? 'bg-gray-400' : ''}`}
                   aria-label={`색상 선택: ${c}`}
                   title={c}
                 />
