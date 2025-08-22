@@ -120,7 +120,7 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
                 onClick={(e) => {
                   if (date) {
                     setSelectedDate(date);
-                    setSelectedTask(null); // 등록 모드
+                    setSelectedTask(null); 
                     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
                     setButtonPosition({
                       top: rect.top + window.scrollY + 20,
@@ -166,8 +166,8 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
                         }}
                         title={task.title}
                         onClick={(e) => {
-                          e.stopPropagation(); // 셀 클릭 이벤트 막기
-                          setSelectedTask(task); // 수정 모드
+                          e.stopPropagation();
+                          setSelectedTask(task); 
                           setSelectedDate(new Date(current));
                           setIsModalOpen(true);
                         }}

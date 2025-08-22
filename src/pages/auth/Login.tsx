@@ -7,9 +7,9 @@ export const Login = () => {
 
   const [userId, setUserId] = useState('');
   const [userPw, setUserPw] = useState('');
-  const [rememberId, setRememberId] = useState(false); // ✅ 아이디 저장 체크박스 state
+  const [rememberId, setRememberId] = useState(false); 
 
-  // ✅ 컴포넌트가 처음 렌더링될 때 savedId 불러오기
+ 
   useEffect(() => {
     const savedId = localStorage.getItem('savedId');
     if (savedId) {

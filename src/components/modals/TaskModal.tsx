@@ -47,7 +47,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
   const [alarmSet, setAlarmSet] = useState(false);
   const [color, setColor] = useState('blue-400');
 
-  // task가 있을 경우 수정 모드, 없으면 등록 모드
+
   useEffect(() => {
     if (task) {
       setTitle(task.title);
@@ -70,8 +70,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
   const handleSubmit = async () => {
     try {
       if (task) {
-        // 수정 API 호출
-        await api.put(`/api/tasks/update/${task.id}`, {
+        await api.put(`/api/tasks/updateTask/${task.id}`, {
           projectId,
           title,
           content,
@@ -81,7 +80,6 @@ const TaskModal: React.FC<TaskModalProps> = ({
           color,
         });
       } else {
-        // 등록 API 호출
         await api.post(`/api/tasks/add/${projectId}`, {
           projectId,
           title,
@@ -98,6 +96,23 @@ const TaskModal: React.FC<TaskModalProps> = ({
     } catch (error) {
       console.error('일정 저장 실패:', error);
       alert('일정 저장에 실패했습니다.');
+    }
+  };
+
+
+  const handleDelete = async () => {
+    const isConfirmed = window.confirm('정말 삭제하시겠습니까?');
+
+    if (!isConfirmed) return; 
+
+    try {
+      await api.delete(`/api/tasks/deleteTask/${task!.id}`);
+
+      onTaskAdded();
+      onClose();
+    } catch (error) {
+      console.error('일정 삭제 실패:', error);
+      alert('일정 삭제에 실패했습니다.');
     }
   };
 
@@ -198,21 +213,33 @@ const TaskModal: React.FC<TaskModalProps> = ({
           </div>
         </div>
 
-        <div className="flex justify-end gap-2 p-4 mt-2">
-          <button
-            className="rounded bg-blue-800 px-4 py-1 hover:bg-blue-900 text-white"
-            onClick={handleSubmit}
-            disabled={!title || !startDate || !endDate}
-          >
-            저장
-          </button>
-          <button
-            className="rounded px-4 py-1 border border-gray-200"
-            onClick={onClose}
-          >
-            닫기
-          </button>
+        <div className="flex justify-between">
+          <div className="flex p-4 mt-2">
+            <button
+              className={`rounded px-4 py-1 border border-gray-200 text-red-600 hover:bg-red-50 ${!task ? 'invisible' : ''}`}
+              onClick={handleDelete}
+            >
+              삭제
+            </button>
+          </div>
+
+          <div className="flex justify-end gap-2 p-4 mt-2">
+            <button
+              className="rounded bg-blue-800 px-4 py-1 hover:bg-blue-900 text-white"
+              onClick={handleSubmit}
+              disabled={!title || !startDate || !endDate}
+            >
+              저장
+            </button>
+            <button
+              className="rounded px-4 py-1 border border-gray-200"
+              onClick={onClose}
+            >
+              닫기
+            </button>
+          </div>
         </div>
+
       </div>
     </div>
   );
