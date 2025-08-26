@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import TaskModal from './modals/TaskModal';
+import ProfileMenu from './modals/ProfileMenu';
 
 interface Task {
   id: number;
