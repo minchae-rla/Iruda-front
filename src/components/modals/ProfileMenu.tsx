@@ -1,10 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
+import api from '../../config/api';
 
-const ProfileMenu = () => {
+interface UserMinimal {
+  name: string;
+  userId: string;
+}
+
+const ProfileMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState<UserMinimal | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // 바깥 클릭 시 닫기
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -15,7 +21,24 @@ const ProfileMenu = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // 로그아웃
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await api.get<UserMinimal>("/api/users/getMinimal");
+        if (res.data) {
+          setUser({
+            name: res.data.name,
+            userId: res.data.userId,
+          });
+        }
+      } catch (err) {
+        console.error("사용자 정보 조회 실패:", err);
+      }
+    };
+
+    if (isOpen && !user) fetchUser();
+  }, [isOpen, user]);
+
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
@@ -25,19 +48,18 @@ const ProfileMenu = () => {
 
   return (
     <div className="relative" ref={menuRef}>
-      {/* 아이콘 대신 프로필 사진 넣을 예정 */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center"
       >
-        😀
+        <img src="/img/user_black.png" className="w-10 h-auto" />
       </button>
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-xl p-2">
           <div className="px-4 py-2 text-sm text-gray-700 border-b">
-            <p className="font-semibold">사용자 이름</p>
-            <p className="text-xs text-gray-500">user@email.com</p>
+            <p className="font-semibold">{user?.name || ""}</p>
+            <p className="text-xs text-gray-500">{user?.userId || ""}</p>
           </div>
           <button
             onClick={() => alert("마이페이지 이동")}
