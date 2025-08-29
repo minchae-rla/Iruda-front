@@ -1,14 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import api from '../../config/api';
-
-interface UserMinimal {
-  name: string;
-  userId: string;
-}
+import UserProfile from '../modals/UserProfile'; 
 
 const ProfileMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState<UserMinimal | null>(null);
+  const [isProfileOpen, setIsProfileOpen] = useState(false); 
+  const [user, setUser] = useState<{ name: string; userId: string } | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -24,7 +21,7 @@ const ProfileMenu: React.FC = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await api.get<UserMinimal>("/api/users/getMinimal");
+        const res = await api.get(`/api/users/getMinimal`);
         if (res.data) {
           setUser({
             name: res.data.name,
@@ -37,32 +34,32 @@ const ProfileMenu: React.FC = () => {
     };
 
     if (isOpen && !user) fetchUser();
-  }, [isOpen, user]);
+  }, [isOpen]);
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     alert("로그아웃 되었습니다.");
-    window.location.href = "/login";
+    window.location.href = "http://localhost:5173";
   };
 
   return (
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center"
+        className="w-10 h-10 rounded-full bg-white flex items-center justify-center"
       >
         <img src="/img/user_black.png" className="w-10 h-auto" />
       </button>
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-xl p-2">
-          <div className="px-4 py-2 text-sm text-gray-700 border-b">
+          <div className="px-4 py-2 text-sm text-gray-700 border-b text-left">
             <p className="font-semibold">{user?.name || ""}</p>
             <p className="text-xs text-gray-500">{user?.userId || ""}</p>
           </div>
           <button
-            onClick={() => alert("마이페이지 이동")}
+            onClick={() => setIsProfileOpen(true)}
             className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 rounded-lg"
           >
             마이페이지
@@ -75,6 +72,8 @@ const ProfileMenu: React.FC = () => {
           </button>
         </div>
       )}
+
+      {isProfileOpen && <UserProfile onClose={() => setIsProfileOpen(false)} />}
     </div>
   );
 };
