@@ -1,22 +1,33 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
-import api from '../../config/api'
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import api from '../../config/api';
 
 export const SetPw = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
+  // FindPw에서 전달된 user PK 값
+  const [userId, setUserId] = useState<number | null>(null);
+
   const [userPw, setUserPw] = useState('');
   const [userPwCheck, setUserPwCheck] = useState('');
   const [errors, setErrors] = useState({ userPw: '', userPwCheck: '' });
 
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
 
+  // 페이지 로드 시 location.state에서 id 받아오기
+  useEffect(() => {
+    if (location.state && location.state.id) {
+      setUserId(location.state.id);
+    } else {
+      alert('잘못된 접근입니다.');
+      navigate('/findPw'); // id 없으면 findPw로 이동
+    }
+  }, [location.state, navigate]);
+
   const handleSetPw = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 유효성 검사
     let formErrors = { ...errors };
     let isValid = true;
 
@@ -47,9 +58,10 @@ export const SetPw = () => {
     if (!isValid) return;
 
     try {
-      // ✅ headers 옵션 제거 → api.ts 인터셉터에서 Authorization 자동 적용
-      await api.put('/api/users/setPw', { userPw });
-      
+      await api.put('/api/users/setPw', {
+        id: userId,
+        userPw,
+      });
 
       alert('비밀번호가 변경되었습니다.');
       navigate('/');
@@ -84,6 +96,7 @@ export const SetPw = () => {
           <img src="/img/logo.jpg" className="w-10 h-auto" />
           <h1 className="text-2xl text-blue-900 font-semibold">비밀번호 변경</h1>
         </div>
+
         <form onSubmit={handleSetPw} className="flex justify-center items-center flex-col space-y-4 w-[350px]">
           <div className="space-y-2 w-[280px]">
             <label className="block w-full text-left text-sm">새 비밀번호</label>
@@ -114,11 +127,6 @@ export const SetPw = () => {
             비밀번호 변경
           </button>
         </form>
-
-        <div className="text-center space-x-4">
-          <span className="text-sm text-blue-800 hover:underline"><a href="/">로그인</a></span>
-          <span className="text-sm text-blue-800 hover:underline"><a href="/findId">아이디 찾기</a></span>
-        </div>
       </div>
     </div>
   );

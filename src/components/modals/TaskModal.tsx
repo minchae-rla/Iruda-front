@@ -29,8 +29,13 @@ const tailwindColors = [
   'gray-400',
 ];
 
+// 로컬 기준 YYYY-MM-DD
 const formatted = (date: Date | string) => {
-  return new Date(date).toISOString().split('T')[0];
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
 
 const TaskModal: React.FC<TaskModalProps> = ({
@@ -46,7 +51,6 @@ const TaskModal: React.FC<TaskModalProps> = ({
   const [endDate, setEndDate] = useState('');
   const [alarmSet, setAlarmSet] = useState(false);
   const [color, setColor] = useState('blue-400');
-
 
   useEffect(() => {
     if (task) {
@@ -99,15 +103,12 @@ const TaskModal: React.FC<TaskModalProps> = ({
     }
   };
 
-
   const handleDelete = async () => {
     const isConfirmed = window.confirm('정말 삭제하시겠습니까?');
-
-    if (!isConfirmed) return; 
+    if (!isConfirmed) return;
 
     try {
       await api.delete(`/api/tasks/deleteTask/${task!.id}`);
-
       onTaskAdded();
       onClose();
     } catch (error) {

@@ -8,7 +8,7 @@ interface Task {
   startDate: Date | string;
   endDate: Date | string;
   alarmSet: string;
-  color: string; 
+  color: string;
 }
 
 interface MyCalendarProps {
@@ -18,6 +18,16 @@ interface MyCalendarProps {
 }
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
+
+// 로컬 기준으로 YYYY-MM-DD 포맷
+const formatted = (date: Date | string | null | undefined) => {
+  if (!date) return '';
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 const getDaysInMonth = (year: number, month: number) => {
   const date = new Date(year, month, 1);
@@ -32,14 +42,6 @@ const getDaysInMonth = (year: number, month: number) => {
   }
 
   return days;
-};
-
-const formatted = (date: Date | string | null | undefined) => {
-  try {
-    return new Date(date!).toISOString().split('T')[0];
-  } catch {
-    return '';
-  }
 };
 
 const isBetween = (date: Date, start: Date | string, end: Date | string) => {
@@ -73,7 +75,7 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
     const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + delta);
     setCurrentDate(newDate);
     setSelectedDate(null);
-    setButtonPosition(null); 
+    setButtonPosition(null);
   };
 
   return (
@@ -103,13 +105,13 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
             const dayOfWeek = date?.getDay();
             const textColor =
               dayOfWeek === 0 ? 'text-red-500' :
-              dayOfWeek === 6 ? 'text-blue-500' :
-              'text-black';
+                dayOfWeek === 6 ? 'text-blue-500' :
+                  'text-black';
 
             const dayTasks = date
               ? tasks
-                  .filter(task => isBetween(date, task.startDate, task.endDate))
-                  .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+                .filter(task => isBetween(date, task.startDate, task.endDate))
+                .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
               : [];
 
             return (
@@ -120,7 +122,7 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
                 onClick={(e) => {
                   if (date) {
                     setSelectedDate(date);
-                    setSelectedTask(null); 
+                    setSelectedTask(null);
                     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
                     setButtonPosition({
                       top: rect.top + window.scrollY + 20,
@@ -167,7 +169,7 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
                         title={task.title}
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSelectedTask(task); 
+                          setSelectedTask(task);
                           setSelectedDate(new Date(current));
                           setIsModalOpen(true);
                         }}
@@ -189,7 +191,7 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
           style={{ top: buttonPosition.top, left: buttonPosition.left }}
           onClick={() => {
             setIsModalOpen(true);
-            setButtonPosition(null); 
+            setButtonPosition(null);
           }}
         >
           일정 등록
@@ -211,7 +213,7 @@ const MyCalendar = ({ tasks, onTaskAdded, projectId }: MyCalendarProps) => {
           }}
           selectedDate={selectedDate}
           projectId={projectId}
-          task={selectedTask} 
+          task={selectedTask}
         />
       )}
     </>
