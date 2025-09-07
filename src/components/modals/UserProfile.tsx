@@ -75,7 +75,7 @@ const UserProfile: React.FC<Props> = ({ onClose }) => {
 
   const handleDeleteUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!window.confirm("회원탈퇴 시 모든 정보가 삭제됩니다. 진행하시겠습니까?")) return;
+    if (!window.confirm("회원탈퇴 시 모든 정보가 삭제되며 복구할 수 없습니다. 진행하시겠습니까?")) return;
 
     try {
       await api.delete("/api/users/deleteUser");

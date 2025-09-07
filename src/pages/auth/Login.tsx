@@ -4,41 +4,45 @@ import api from '../../config/api';
 
 export const Login = () => {
   const navigate = useNavigate();
-
   const [userId, setUserId] = useState('');
   const [userPw, setUserPw] = useState('');
-  const [rememberId, setRememberId] = useState(false); 
+  const [rememberId, setRememberId] = useState(false);
+  const [keepLogin, setKeepLogin] = useState(false);
 
- 
   useEffect(() => {
     const savedId = localStorage.getItem('savedId');
     if (savedId) {
       setUserId(savedId);
       setRememberId(true);
     }
+
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+
+    if (accessToken) {
+      navigate('/home');
+    } else if (refreshToken) {
+      api.post('/api/users/reissue', { refreshToken })
+        .then((res) => {
+          const { accessToken, refreshToken: newRefreshToken } = res.data;
+          localStorage.setItem('accessToken', accessToken);
+          localStorage.setItem('refreshToken', newRefreshToken);
+          navigate('/home');
+        })
+        .catch(() => {});
+    }
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
-      const response = await api.post(
-        '/api/users/login',
-        { userId, userPw },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
-
-      const { accessToken } = response.data;
-
+      const response = await api.post('/api/users/login', { userId, userPw });
+      const { accessToken, refreshToken } = response.data;
       localStorage.setItem('accessToken', accessToken);
-
-      if (rememberId) {
-        localStorage.setItem('savedId', userId);
-      } else {
-        localStorage.removeItem('savedId');
-      }
-
-      navigate('/Home');
+      if (keepLogin) localStorage.setItem('refreshToken', refreshToken);
+      if (rememberId) localStorage.setItem('savedId', userId);
+      else localStorage.removeItem('savedId');
+      navigate('/home');
     } catch (error) {
       alert('로그인 실패: 아이디 또는 비밀번호를 확인하세요.');
       console.error(error);
@@ -48,22 +52,13 @@ export const Login = () => {
   const handleKakaoLogin = async () => {
     try {
       const response = await api.get('/api/oauth/kakao');
-      const kakaoUrl = response.data;
-      window.location.href = kakaoUrl;
+      window.location.href = response.data;
     } catch (error) {
-      console.error('카카오 로그인 시작 오류:', error);
+      console.error(error);
     }
   };
 
-  const handlNaverLogin = async () => {
-    alert('준비중인 서비스입니다.');
-  };
-
-  const handleGoogleLogin = async () => {
-    alert('준비중인 서비스입니다.');
-  };
-
-  const handleSignUp = () => navigate('/signUp');
+  const handleSignUp = () => navigate('/signup');
   const handleFindId = () => navigate('/findId');
   const handleFindPw = () => navigate('/findPw');
 
@@ -73,93 +68,36 @@ export const Login = () => {
         <img src="/img/logo.jpg" className="w-12 h-auto" />
         <h1 className="text-4xl text-blue-800 font-semibold">IRUDA</h1>
       </div>
-      <form
-        onSubmit={handleLogin}
-        className="flex justify-center items-center flex-col gap-4"
-      >
-        <input
-          className="border w-[200px] h-[40px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2"
-          type="text"
-          placeholder="아이디"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-        />
-        <input
-          className="border w-[200px] h-[40px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2"
-          type="password"
-          placeholder="비밀번호"
-          value={userPw}
-          onChange={(e) => setUserPw(e.target.value)}
-        />
-
-
+      <form onSubmit={handleLogin} className="flex justify-center items-center flex-col gap-4">
+        <input type="text" placeholder="아이디" value={userId} onChange={(e) => setUserId(e.target.value)}
+               className="border w-[200px] h-[40px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2"/>
+        <input type="password" placeholder="비밀번호" value={userPw} onChange={(e) => setUserPw(e.target.value)}
+               className="border w-[200px] h-[40px] rounded-md focus:outline-none focus:border-blue-900 focus:border-2 pl-2"/>
         <div className="flex items-center gap-4 w-[200px]">
           <div className='flex gap-1'>
-            <input type="checkbox" id="rememberToken" />
-            <label htmlFor="rememberId" className="text-sm text-gray-600">
-              로그인 유지
-            </label>
+            <input type="checkbox" id="keepLogin" checked={keepLogin} onChange={(e) => setKeepLogin(e.target.checked)}/>
+            <label htmlFor="keepLogin" className="text-sm text-gray-600">로그인 유지</label>
           </div>
-
           <div className='flex gap-1'>
-            <input type="checkbox"
-              id="rememberId"
-              checked={rememberId}
-              onChange={(e) => setRememberId(e.target.checked)}
-            />
-            <label htmlFor="rememberId" className="text-sm text-gray-600">
-              아이디 저장
-            </label>
+            <input type="checkbox" id="rememberId" checked={rememberId} onChange={(e) => setRememberId(e.target.checked)}/>
+            <label htmlFor="rememberId" className="text-sm text-gray-600">아이디 저장</label>
           </div>
         </div>
-
-        <button
-          type="submit"
-          className="rounded bg-blue-800 w-[200px] h-[40px] text-1xl font-medium text-white hover:bg-blue-900"
-        >
+        <button type="submit"
+                className="rounded bg-blue-800 w-[200px] h-[40px] text-1xl font-medium text-white hover:bg-blue-900">
           로그인
         </button>
       </form>
-
       <div className="flex flex-col gap-4">
         <p className="text-sm text-gray-600">소셜로 간편하게 로그인</p>
         <div className="flex gap-7">
-          <img
-            src="/img/kakao.png"
-            className="w-10 h-auto hover:cursor-pointer"
-            onClick={handleKakaoLogin}
-          />
-          <img
-            src="/img/naver.png"
-            className="w-10 h-auto hover:cursor-pointer"
-            onClick={handlNaverLogin}
-          />
-          <img
-            src="/img/google.png"
-            className="w-10 h-auto hover:cursor-pointer"
-            onClick={handleGoogleLogin}
-          />
+          <img src="/img/kakao.png" className="w-10 h-auto hover:cursor-pointer" onClick={handleKakaoLogin}/>
         </div>
       </div>
       <div className="flex justify-between items-center">
-        <button
-          onClick={handleSignUp}
-          className="w-[85px] h-[40px] text-sm font-medium text-gray-500 hover:underline"
-        >
-          회원가입
-        </button>
-        <button
-          onClick={handleFindId}
-          className="w-[85px] h-[40px] text-sm font-medium text-gray-500 hover:underline"
-        >
-          아이디찾기
-        </button>
-        <button
-          onClick={handleFindPw}
-          className="w-[85px] h-[40px] text-sm font-medium text-gray-500 hover:underline"
-        >
-          비밀번호찾기
-        </button>
+        <button onClick={handleSignUp} className="w-[85px] h-[40px] text-sm font-medium text-gray-500 hover:underline">회원가입</button>
+        <button onClick={handleFindId} className="w-[85px] h-[40px] text-sm font-medium text-gray-500 hover:underline">아이디찾기</button>
+        <button onClick={handleFindPw} className="w-[85px] h-[40px] text-sm font-medium text-gray-500 hover:underline">비밀번호찾기</button>
       </div>
     </div>
   );
